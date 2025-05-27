@@ -1,0 +1,1007 @@
+body {
+	margin: 0;
+	// background-repeat: repeat-x;
+	// background-image: url(https://research.exc.co.kr/RAC2023/images/n_bg_wrap.jpg?ver=1);
+	// background-position: center top;
+	// background-color: #efefef;
+	font-family: 나눔고딕, NanumGothic, "Nanum Gothic", "돋움", dotum, Helvetica, sans-serif;
+}
+img {
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+	// max-width: 100%;
+	// height: auto;
+	// vertical-align: top;
+}
+a {
+	vertical-align: middle;
+}
+input[type="text"] {
+	background-color: #fff;
+}
+.align_center {
+	text-align: center;
+}
+.f_500 {
+	background-color: #eee;
+	font-weight: bold;
+}
+.tbl_style1 tbody tr {
+	height: 45px;
+}
+.tbl_style1 tbody td {
+}
+.tbl_style1 {
+	.tdw-20 {
+		width: 16%;
+	}
+}
+/*  */
+.page_body .flex .tit-col h3 {
+	text-indent: -10px;
+	word-break: break-all;
+}
+.tit-col {
+	padding-left: 30px;
+	padding-right: 10px;
+	width: 15%;
+}
+.desc-col {
+	width: 85%;
+}
+/* 가중치 radio */
+.weight-radio {
+	width: 30px;
+	height: 30px;
+	accent-color: #337ab7;
+}
+.full-wrap {
+	padding: 0 !important;
+}
+.full-label {
+	padding: 0 !important;
+	label {
+		width: 100%;
+		height: 45px;
+		font-weight: 400;
+		display: flex;
+		align-items: center;
+	}
+}
+.etcText > div {
+	display: inline-block;
+	padding-left: 10px;
+	padding-top: 10px;
+	font-size: 13px;
+}
+.it {
+	display: flex;
+	align-items: center;
+	> label,
+	> span {
+		display: inline-block;
+		float: none !important;
+	}
+	.etc_lb {
+		padding-top: 0;
+	}
+	.etc_f {
+		+ .notic {
+			padding: 0;
+		}
+	}
+}
+.ask_wr.etcText {
+	padding: 0;
+}
+.weight-alert {
+	thead th {
+		width: 20%;
+	}
+}
+.weight-td {
+	// padding: 0 !important;
+	padding: 5px 8px !important;
+	label {
+		// padding: 5px 8px 5px 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 47px;
+	}
+}
+input[type="checkbox"],
+input[type="radio"] {
+	margin: 0;
+	width: 25px;
+	height: 25px;
+	accent-color: #337ab7;
+}
+.mt {
+	margin-top: 10px;
+}
+.check-td {
+	padding: 0 !important;
+	label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 45px;
+		padding: 5px 10px;
+	}
+}
+
+#wrapper {
+	min-width: 1200px;
+	.header-img {
+		background-position: center;
+		background-size: cover;
+		background-repeat: no-repeat;
+		text-align: center;
+		min-height: 500px;
+	}
+	#surveyStart {
+		margin: 0 auto;
+		> div {
+			text-align: center;
+			&.top {
+			}
+			&.bottom {
+				padding-top: 30px;
+			}
+		}
+		.startForm {
+			padding: 10px 0;
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			justify-content: center;
+			label {
+				color: #242424;
+				font-size: 20px;
+				font-weight: 600;
+			}
+			input {
+				margin-left: 10px;
+				width: 560px;
+				height: 65px;
+				border: 10px solid #bf4966;
+				font-family: 나눔고딕, NanumGothic, "Nanum Gothic", "돋움", dotum, Helvetica, sans-serif;
+				font-size: 18px;
+				vertical-align: middle;
+				padding-left: 24px;
+				font-weight: 600;
+				color: #088bdf;
+				letter-spacing: 1px;
+				margin-top: 0px;
+			}
+			button {
+				margin-left: 5px;
+				height: 70px;
+				border: none;
+				cursor: pointer;
+			}
+		}
+	}
+	.form-check {
+		input,
+		label {
+			margin-right: 10px;
+		}
+	}
+	#surveyHome {
+		background-color: #fff;
+		height: calc(100vh - 72px);
+		overflow-y: auto;
+		overflow-x: hidden;
+		.email-mark {
+			width: 1110px;
+			text-align: right;
+			margin: 0 auto;
+			font-size: 18px;
+			color: #000;
+		}
+		.btn_foot {
+			background-color: #fff;
+			height: 72px;
+		}
+		.multiple .it label input[type="checkbox"]:checked + span:before,
+		.multiple .it label input[type="radio"]:checked + span:before {
+			background-color: #337ab7;
+			color: #fff;
+			border-color: #337ab7;
+		}
+		.page {
+			padding-bottom: 0;
+		}
+		.survey-home-footer {
+			width: 1110px;
+			margin: 0 auto;
+			padding: 20px 30px 20px 200px;
+			background-color: #f5f5f5;
+			p {
+				padding: 10px 0;
+			}
+			a {
+				color: rgb(55, 88, 233);
+				font-weight: bold;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+	#adminSurveyHome {
+		background-color: #fff;
+		height: calc(100vh - 92px);
+		overflow-y: auto;
+		overflow-x: hidden;
+		.btn_foot {
+			background-color: #fff;
+			height: 92px;
+			p {
+				padding: 5px 0;
+				color: #f00;
+			}
+		}
+		.top_menu {
+			a {
+				padding: 10px;
+				margin-bottom: 5px;
+				button {
+					margin-left: 5px;
+				}
+			}
+		}
+		.page_body {
+			.munhang {
+				background-color: rgba(0, 0, 255, 0.1);
+				.admin-textarea {
+					width: calc(100% - 130px);
+					margin-right: 5px;
+					font-size: 12px;
+					resize: none;
+					overflow: hidden;
+					color: #00498c;
+				}
+				.admin-plma {
+					background-color: #aaa;
+					padding: 0 10px;
+					border-radius: 3px;
+					color: #fff;
+					font-size: 15px;
+					line-height: 1;
+					margin: 5px 0;
+					&.red {
+						background-color: #d9534f;
+					}
+					&.green {
+						background-color: #2f9d27;
+					}
+				}
+				// input[type="checkbox"] {
+				//   height: auto;
+				// }
+				.R-list {
+					padding: 0 5px;
+					padding-top: 20px;
+					padding-bottom: 20px;
+					.question {
+						h2 {
+							font-size: 22px;
+							font-weight: 700;
+							padding: 5px 0;
+						}
+						h3 {
+							padding: 5px 0 5px 0;
+							margin: 5px 0 10px 0;
+							font-size: 20px;
+							border-bottom: 5px solid #ccc;
+						}
+						h4 {
+							padding: 5px 0 10px 0;
+							font-size: 16px;
+						}
+						.adminMultiTable > div {
+							border-bottom: 1px solid #ddd;
+						}
+						.admin-weightAlert {
+							display: inline-block;
+							width: 20%;
+							input[type="text"] {
+								width: 150px;
+							}
+						}
+						.admin-th,
+						.admin-td {
+							td,
+							th {
+								padding: 0;
+								> div {
+									display: flex;
+									align-items: center;
+									justify-content: center;
+								}
+							}
+							select {
+								font-size: 12px;
+							}
+							textarea {
+								width: 100%;
+								font-size: 16px;
+								border: 1px solid #ddd;
+								overflow: hidden;
+							}
+							input[type="number"] {
+								width: 40px;
+							}
+						}
+						.admin-tbody {
+							td {
+								background-color: #eee;
+								text-align: center;
+							}
+						}
+						tbody {
+							td {
+								background-color: #fff;
+							}
+						}
+						.admin-choice {
+							display: flex;
+							flex-wrap: wrap;
+							.it {
+								float: none;
+								width: 100%;
+							}
+							&.half .it {
+								width: 50%;
+							}
+						}
+						input[type="text"] {
+							background-color: #fff;
+						}
+					}
+				}
+			}
+
+			.admin-questionAdd {
+				position: relative;
+				text-align: center;
+				padding: 10px 0;
+				height: 50px;
+				button {
+					position: absolute;
+					right: -67.5px;
+					padding: 5px 8px;
+				}
+			}
+		}
+		.admin-munhangAdd {
+			border-top: 1px solid black;
+			padding: 10px 0;
+			text-align: center;
+		}
+	}
+	#surveyEnd {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		div {
+			margin-top: 10px;
+			text-align: center;
+			button {
+				padding: 10px 20px;
+				font-size: 25px;
+			}
+		}
+	}
+	/* checkbox radio label 및 css 설정 */
+	.checkTable {
+		tbody td {
+			position: relative;
+			padding: 5px 10px;
+			min-width: 55px;
+			label {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+			}
+			input {
+				position: relative;
+				z-index: 1;
+			}
+			input:checked ~ label {
+				background-color: rgba(0, 195, 255, 0.1);
+			}
+			input[type="radio"],
+			input[type="checkbox"] {
+				margin-top: 3px;
+			}
+			&.wei-bold {
+				&:nth-last-child(5n) {
+					border-left: 3px solid black;
+				}
+			}
+		}
+	}
+	#adminMain {
+		min-height: 100vh;
+		text-align: center;
+		align-content: center;
+		text-align: -webkit-center;
+		h1 {
+			padding: 10px 0;
+		}
+		h2 {
+			padding: 10px 0;
+		}
+		button {
+			margin-left: 5px;
+		}
+		.admin-set {
+			max-width: 500px;
+			background-color: #ddd;
+			border-radius: 10px;
+			box-shadow: 2px 2px 2px #555;
+			padding: 10px 0;
+			> div {
+				padding: 5px 0;
+			}
+		}
+		// datepicker
+		.example-custom-input {
+			background-color: #282c34;
+			color: white;
+			cursor: pointer;
+			width: 180px;
+			padding: 10px;
+			margin-bottom: 5px;
+		}
+		/* timepicker */
+		.react-ios-time-picker-main {
+			display: inline-block;
+		}
+	}
+	#adminSurveyResult {
+		.header-wrap {
+			height: 160px;
+			> div {
+				position: fixed;
+				width: 100%;
+				background-color: #fff;
+				h1 {
+					padding: 20px 0;
+					text-align: center;
+				}
+			}
+		}
+		.table .tbl_style1 tbody td {
+			vertical-align: sub;
+		}
+	}
+	// 수주직원용, 영업용
+	#adminSurveyService {
+		h1 {
+			text-align: center;
+		}
+		.authority-check {
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+			background-color: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 999;
+			> form {
+				width: 300px;
+				padding: 20px 20px;
+				background-color: #aaa;
+				border: 1px solid #888;
+				box-shadow: 2px 2px 2px #555;
+				border-radius: 10px;
+				text-align: center;
+			}
+		}
+		.tab {
+			padding: 20px 10px;
+			> button.btn {
+				border-radius: 5px 0 0 5px;
+				font-size: 18px;
+				&:nth-child(2) {
+					border-radius: 0 5px 5px 0;
+				}
+				&.active {
+					color: #333;
+					background-color: #e6e6e6;
+					border-color: #adadad;
+				}
+				&:focus {
+					outline: none;
+				}
+			}
+			.f-right {
+				float: right;
+				padding: 2px 5px 5px 0;
+				> button {
+					font-size: 20px;
+				}
+			}
+			button {
+				&.re {
+					background-color: #333;
+					color: #fff;
+					padding: 7px;
+					border-radius: 6px;
+					box-shadow: 2px 2px 2px #aaa;
+					position: relative;
+					user-select: none;
+					span {
+						font-size: 30px;
+					}
+					&:active {
+						top: 1px;
+						left: 1px;
+						box-shadow: none;
+					}
+				}
+			}
+		}
+		table {
+			th,
+			td {
+				text-align: center;
+			}
+			td .modify {
+				display: inline;
+				img {
+					width: 20px;
+					vertical-align: text-bottom;
+				}
+			}
+		}
+	}
+}
+#surveyIntro {
+	width: 100%;
+	> div {
+		text-align: center;
+		// background-repeat: no-repeat;
+		// background-position-x: 50%;
+	}
+	.servey-btn {
+		> div {
+			display: flex;
+			> button {
+				width: 50%;
+				align-content: center;
+				padding-left: 30px;
+				h1 {
+					font-size: 50px;
+					color: #23d9a0;
+					font-weight: 900;
+					padding: 20px 0 25px 0;
+				}
+				h2 {
+					font-size: 40px;
+					font-weight: 700;
+				}
+				&:last-child {
+					padding-left: 0;
+					padding-right: 40px;
+					h1 {
+						color: #3792ff;
+					}
+				}
+				p {
+					font-size: 30px;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+}
+
+.admin-file {
+	position: relative;
+	&.noFile {
+		border-bottom: 1px solid black;
+		padding: 20px 0;
+	}
+	.admin-file-btn {
+		position: absolute;
+		display: block;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	.admin-file-cancel {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		color: #fff;
+		font-size: 20px;
+		border-radius: 10px;
+	}
+	input[type="file"] {
+		// display: inline;
+		display: none;
+	}
+}
+.admin-initForm {
+	padding: 20px 0;
+	text-align: center;
+	input {
+		border: 1px solid black;
+	}
+	.react-datepicker__tab-loop {
+		display: inline-block;
+	}
+	.admin-initBtn {
+		border: 1px solid black;
+		background-color: #aaa;
+		display: inline-block;
+		height: 100%;
+		padding: 10px 20px;
+		color: #fff;
+	}
+	> div {
+		padding: 5px 0;
+	}
+}
+.smooth-input {
+	width: 100px;
+	margin: 10.9px 0;
+	margin-right: 5px;
+	border: 1px solid black;
+	background-color: #fff;
+}
+.smooth-textarea {
+	width: 90%;
+	border: 1px solid black;
+	background-color: #fff;
+	overflow: hidden;
+}
+
+/* notPage BEGIN */
+#notPage {
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	flex-wrap: nowrap;
+	text-align: center;
+	h3 {
+		color: #f00;
+	}
+}
+
+/* notPage END */
+
+/* 알람창 BEGIN */
+.alarm {
+	width: 100%;
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	z-index: 999;
+	.alarm-board {
+		position: absolute;
+		top: -9999px;
+		width: 100%;
+		max-width: 500px;
+		z-index: 901;
+		.alarm-content {
+			height: 100%;
+			margin: 0 15px;
+			position: relative;
+			overflow: hidden;
+			background: #fff;
+			background-color: #333;
+			color: #fff;
+			border-radius: 0 0 10px 10px;
+			box-shadow: 7px 7px 7px #aaa;
+			.alarm-title {
+				font-size: 20px;
+				font-weight: 700;
+				padding: 15px 50px 15px 20px;
+			}
+			.alarm-con {
+				max-height: calc(100vh - 220px);
+				font-size: 18px;
+				width: 100%;
+				padding: 0 20px 30px;
+				overflow-y: auto;
+				overflow-x: hidden;
+			}
+		}
+	}
+}
+/* 알람창 END */
+/* 모달창 BEGIN */
+.modal-wrap {
+	display: none;
+	.modal {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		.modal-background {
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.6);
+			position: absolute;
+			z-index: 900;
+		}
+		.modal-board {
+			position: absolute;
+			// max-width: 500px;
+			z-index: 901;
+			.modal-content {
+				height: 100%;
+				margin: 0 15px;
+				position: relative;
+				overflow: hidden;
+				background: #fff;
+				border: 0.1px solid #686868;
+				border-radius: 20px;
+				.modal-title {
+					font-size: 16px;
+					font-weight: 400;
+					padding: 15px 50px 15px 20px;
+				}
+				.modal-con {
+					max-height: calc(100vh - 220px);
+					font-size: 14px;
+					width: 100%;
+					padding: 0 20px 0;
+					overflow-x: hidden;
+					overflow-y: auto;
+				}
+				.complete-wrap {
+					position: relative;
+					padding: 0 20px 20px 20px;
+					p {
+						padding: 20px 70px 20px 10px;
+					}
+					button {
+						right: 20px;
+						padding: 7px 15px;
+						font-size: 15px;
+						position: absolute;
+						top: 10px;
+					}
+				}
+				.modal-btn_wrap {
+					position: absolute;
+					right: 20px;
+					top: 20px;
+					.modal_close {
+						background: url("../images/ico_close_40x40.png") no-repeat 0 0;
+						width: 16px;
+						height: 16px;
+						font-size: 0;
+						background-size: 100% auto;
+						vertical-align: top;
+					}
+				}
+				.modal-confirm {
+					padding-right: 10px;
+					text-align: right;
+					position: absolute;
+					right: 0;
+					bottom: 5px;
+					button {
+						width: 60px;
+						height: 40px;
+						&:hover {
+							box-shadow: 1px 1px 4px black;
+						}
+						&:active {
+							box-shadow: none;
+							background-color: #e1e1e1;
+						}
+					}
+					span {
+						margin-left: 2px;
+					}
+				}
+				.interest-wrap {
+					width: 100%;
+					display: flex;
+					justify-content: center;
+					padding: 0 20px 10px;
+					.modal-interest {
+						user-select: none;
+						display: flex;
+						justify-content: flex-start;
+						flex-wrap: wrap;
+						.category {
+							display: inline-block;
+							padding-right: 20px;
+							padding-bottom: 10px;
+							width: 50%;
+							max-width: 180px;
+							min-width: 150px;
+							.txt {
+								display: inline-block;
+								width: calc(100% - 30px);
+							}
+							label {
+								font-size: 20px;
+								&:first-child {
+									padding-right: 5px;
+								}
+							}
+							input[type="checkbox"] {
+								display: none;
+							}
+							input[type="checkbox"] + label {
+								display: inline-block;
+								width: 30px;
+								height: 30px;
+								border: 3px solid #707070;
+								position: relative;
+							}
+							input.checked + label::after {
+								content: "✔";
+								font-size: 25px;
+								width: 30px;
+								height: 30px;
+								text-align: center;
+								position: absolute;
+								left: 0;
+								top: -5px;
+							}
+						}
+					}
+				}
+				.store-btn {
+					padding: 0 20px 40px;
+					text-align: right;
+					button {
+						display: inline-block;
+						height: 40px;
+						width: 150px;
+						padding: 0 10px;
+						background: #4b4b4b;
+						color: #fff;
+						font-size: 20px;
+						font-weight: 400;
+						text-align: center;
+						line-height: 42px;
+					}
+				}
+			}
+		}
+		&.active .modal-board {
+			-webkit-animation-duration: 0.4s;
+			animation-duration: 0.4s;
+			-webkit-animation-fill-mode: both;
+			animation-fill-mode: both;
+			-webkit-animation-name: fadeInToCenter;
+			animation-name: fadeInToCenter;
+		}
+		&.delay .modal-board {
+			-webkit-animation-duration: 0.35s;
+			animation-duration: 0.35s;
+			-webkit-animation-name: fadeOutToBottom;
+			animation-name: fadeOutToBottom;
+		}
+	}
+}
+@keyframes fadeOutToBottom {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-40px);
+	}
+	55% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(101%);
+	}
+}
+@keyframes fadeInToCenter {
+	0% {
+		opacity: 0;
+		transform: translateY(101%);
+	}
+	40% {
+		transform: translateY(-30px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+/* 모달창 END */
+
+/* 로딩 */
+#allLoding {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	.lds-facebook {
+		position: relative;
+		width: 200px;
+		height: 200px;
+		text-align: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+		div {
+			width: 33px;
+			background: #42b883;
+			animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+			&:nth-child(1) {
+				animation-delay: -0.24s;
+			}
+			&:nth-child(2) {
+				animation-delay: -0.12s;
+			}
+			&:nth-child(3) {
+				animation-delay: 0;
+			}
+		}
+	}
+	@keyframes lds-facebook {
+		0% {
+			top: 6px;
+			height: 200px;
+		}
+		50%,
+		100% {
+			top: 19px;
+			height: 100px;
+		}
+	}
+}
+
+.c_green {
+	color: #2f9d27 !important;
+}
+.c_red {
+	color: #f00 !important;
+}
+.c_blue {
+	color: #00f !important;
+}
+.f-bold {
+	font-weight: bold;
+}
+.flex-center {
+	display: flex;
+	align-items: center;
+}
