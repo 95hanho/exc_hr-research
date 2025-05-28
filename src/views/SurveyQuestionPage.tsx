@@ -450,6 +450,7 @@ export default function SurveyQuestionPage() {
 							navigate(`/survey/end`, {
 								state: {
 									surveyType,
+									email: location.state.email,
 								},
 							});
 						} else {

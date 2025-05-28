@@ -393,9 +393,33 @@ input[type="radio"] {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		div {
+		> div {
 			margin-top: 10px;
 			text-align: center;
+			.manager-reinput {
+				margin: 10px 0 20px 0;
+				border: 1px solid #aaa;
+				padding: 20px;
+				border-radius: 10px;
+				h4 {
+					font-size: 25px;
+					margin-bottom: 10px;
+				}
+				div {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					input {
+						border: 1px solid #aaa;
+						font-size: 18px;
+						padding: 10px;
+					}
+					button {
+						padding: 5px 10px;
+						margin-left: 5px;
+					}
+				}
+			}
 			button {
 				padding: 10px 20px;
 				font-size: 25px;

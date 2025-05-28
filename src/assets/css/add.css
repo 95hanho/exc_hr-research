@@ -388,11 +388,35 @@ input[type=radio] {
   align-items: center;
   justify-content: center;
 }
-#wrapper #surveyEnd div {
+#wrapper #surveyEnd > div {
   margin-top: 10px;
   text-align: center;
 }
-#wrapper #surveyEnd div button {
+#wrapper #surveyEnd > div .manager-reinput {
+  margin: 10px 0 20px 0;
+  border: 1px solid #aaa;
+  padding: 20px;
+  border-radius: 10px;
+}
+#wrapper #surveyEnd > div .manager-reinput h4 {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+#wrapper #surveyEnd > div .manager-reinput div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#wrapper #surveyEnd > div .manager-reinput div input {
+  border: 1px solid #aaa;
+  font-size: 18px;
+  padding: 10px;
+}
+#wrapper #surveyEnd > div .manager-reinput div button {
+  padding: 5px 10px;
+  margin-left: 5px;
+}
+#wrapper #surveyEnd > div button {
   padding: 10px 20px;
   font-size: 25px;
 }

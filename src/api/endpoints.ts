@@ -21,6 +21,7 @@ const API_URL = {
 	SURVEY_QUESTION: survey + "/question/:surveyType/:surveyPage", // 설문문항 정보 조회
 	SURVEY_QUESTION_VIEW: survey + "/question-tester/:surveyType/:surveyPage", // 설문문항 테스트 정보 조회
 	SURVEY_STORE: survey + "/answer/:surveyType/:surveyPage", // 설문문항 답변 저장
+	SURVEY_MANAGER: survey + "/corp-manager/:surveyType", // 설문요청담당자 불러오기, 저장하기
 };
 
 export default API_URL;
