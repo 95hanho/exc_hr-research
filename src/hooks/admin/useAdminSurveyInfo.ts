@@ -1,13 +1,16 @@
-// hooks/survey/useSurveyCommonInfo.ts
 import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";
 import { AdminSurveyInfo } from "../../types/common";
 
+interface AdminSurveyInfoParam extends AdminSurveyInfo {
+	surveyYear: string;
+}
+
 // 설문 시작하기
 export function useAdminSurveyInfo() {
 	return useMutation({
-		mutationFn: async ({ survey_name, survey_url, survey_description, surveyYear }: AdminSurveyInfo & { surveyYear: string }) => {
+		mutationFn: async ({ survey_name, survey_url, survey_description, surveyYear }: AdminSurveyInfoParam) => {
 			const res = await post_urlFormData(API_URL.ADMIN_COMMON, { survey_name, survey_url, survey_description, survey_year: surveyYear });
 			return res.data;
 		},

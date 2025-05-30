@@ -1,21 +1,34 @@
-// hooks/survey/useSurveyCommonInfo.ts
 import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";
+import { Munhang, RequiredHideRule, ResultData } from "../../types/survey";
 
-type AdminSurveyQuestion = {
+type AdminSetSurveyQuestionParam = {
 	surveyType: string;
 	surveyPage: string;
-	top_menu_list_jsonData: string;
+	top_menuList: string[];
 	head_title: string;
-	jsonData: string;
+	requiredList: RequiredHideRule[];
+	munhangs: Munhang[];
+	initData: ResultData;
 };
 
 // 설문 시작하기
 export function useAdminSetSurveyQuestion() {
 	return useMutation({
-		mutationFn: async ({ surveyType, surveyPage, top_menu_list_jsonData, head_title, jsonData }: AdminSurveyQuestion) => {
-			const res = await post_urlFormData(API_URL.ADMIN_SURVEY, { surveyType, surveyPage, top_menu_list_jsonData, head_title, jsonData });
+		mutationFn: async ({ surveyType, surveyPage, top_menuList, head_title, requiredList, munhangs, initData }: AdminSetSurveyQuestionParam) => {
+			const param_obj = {
+				surveyType,
+				surveyPage,
+				top_menu_list_jsonData: JSON.stringify({ top_menuList }),
+				head_title,
+				jsonData: JSON.stringify({
+					requiredList,
+					munhangs,
+					initData,
+				}),
+			};
+			const res = await post_urlFormData(API_URL.ADMIN_SURVEY, param_obj);
 			return res.data;
 		},
 		/*

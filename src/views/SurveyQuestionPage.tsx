@@ -116,7 +116,7 @@ export default function SurveyQuestionPage() {
 					const targetEl = document.getElementById(`R_${r_num}`);
 					if (targetEl?.classList.contains("hide")) {
 						checkAttr.map((v) => {
-							resultObj[v] = null;
+							resultObj[v] = "";
 						});
 						continue;
 					}
@@ -374,9 +374,12 @@ export default function SurveyQuestionPage() {
 				if (!result) break;
 			}
 			// 빈문자열인거 null처리
-			for (const key in resultObj) {
-				if (resultObj[key] === "") resultObj[key] = null;
-			}
+			// for (const key in resultObj) {
+			// 	if (resultObj[key] === "") {
+			// 		console.log(123);
+			// 		resultObj[key] = "";
+			// 	}
+			// }
 			if (!result) {
 				return { status: false, obj: resultObj };
 			} else {

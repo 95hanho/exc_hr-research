@@ -29,7 +29,7 @@ export interface PersonalInfo {
 	R_COMMON_1_10?: string;
 	recommend?: string;
 }
-export type ResultData = Record<string, string | number | null>;
+export type ResultData = Record<string, string>;
 export type SurveyStoreData = Record<string, string | number | boolean | null>;
 
 /*  */

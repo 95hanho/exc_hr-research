@@ -55,7 +55,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 		if (typeof targetNum === "bigint") {
 			return targetNum.toString();
 		} else {
-			return targetNum;
+			return targetNum.toString();
 		}
 	};
 	const disabledCalc = (trIdx: number, tdIdx: number) => {
@@ -338,7 +338,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 																name={name}
 																value={num}
 																className="weight-radio"
-																checked={resultData[name] == num}
+																checked={resultData[name] == num + ""}
 																onChange={(e) => changeResultData(e)}
 																disabled={disabled}
 															/>
@@ -358,7 +358,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 																name={name}
 																value={trIdx * 5 + idx + 1}
 																className="weight-radio"
-																checked={resultData[name] == trIdx * 5 + idx + 1}
+																checked={resultData[name] == String(trIdx * 5 + idx + 1)}
 																onChange={(e) => changeResultData(e)}
 															/>
 															<label htmlFor={`${name}_${trIdx * 5 + idx + 1}`}></label>
@@ -375,7 +375,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 													customAttr[idIdx] = {
 														rowSpan: 2,
 													};
-													const value = valueUp + idIdx + 1;
+													const value = String(valueUp + idIdx + 1);
 													inEles.push(
 														<>
 															<input
@@ -393,7 +393,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 												}
 												fiveAsc.map((_, idx) => {
 													const cIdx = idx + valueUp + 1;
-													const value = idIdx + cIdx + 1;
+													const value = String(idIdx + cIdx + 1);
 													inEles.push(
 														<>
 															<input
@@ -720,7 +720,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 															id={`${name}_${trIdx + 1}`}
 															name={name}
 															value={trIdx + 1}
-															checked={data == trIdx + 1}
+															checked={data == String(trIdx + 1)}
 															onChange={(e) => changeResultData(e)}
 															disabled={resultData[`R_${R_num}_${trIdx + 1}_etc`] === ""}
 														/>
@@ -869,7 +869,7 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 																name={backName}
 																value={num}
 																className="weight-radio"
-																checked={resultData[backName] == num}
+																checked={resultData[backName] == num + ""}
 																onChange={(e) => changeResultData(e)}
 																disabled={disabled || !fList.includes(trIdx + 1 + "")}
 															/>
@@ -920,9 +920,9 @@ export default function MultiTable({ subContents, resultData, changeResultData, 
 																// 라이오데이터가 있을 때
 																if (radioName) {
 																	const data = resultData[radioName];
-																	if (!e.target.value && data == trIdx + 1) {
+																	if (!e.target.value && data == String(trIdx + 1)) {
 																		obj[radioName] = "";
-																	} else if (e.target.value && data != trIdx + 1) {
+																	} else if (e.target.value && data != String(trIdx + 1)) {
 																		obj[radioName] = trIdx + 1 + "";
 																	}
 																}

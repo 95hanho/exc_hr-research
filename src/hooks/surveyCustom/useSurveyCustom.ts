@@ -102,14 +102,14 @@ export default function useSurveyCustom(surveyType: string, surveyPageNum: numbe
 					const el = v as HTMLInputElement;
 					el.disabled = false;
 				});
-				if (R_8_list.some((v) => newObj[v] != 0 && newObj[v] != "")) {
+				if (R_8_list.some((v) => newObj[v] != "")) {
 					R_9_list.forEach((v) => (newObj[v] = ""));
 					document.querySelectorAll(`[name^="R_9"]`).forEach((v) => {
 						const el = v as HTMLInputElement;
 						el.disabled = true;
 					});
 				}
-				if (R_9_list.some((v) => newObj[v] != 0 && newObj[v] != "")) {
+				if (R_9_list.some((v) => newObj[v] != "")) {
 					R_8_list.forEach((v) => (newObj[v] = ""));
 					document.querySelectorAll(`[name^="R_8"]`).forEach((v) => {
 						const el = v as HTMLInputElement;
@@ -151,7 +151,7 @@ export default function useSurveyCustom(surveyType: string, surveyPageNum: numbe
 				if (
 					Object.keys(resultData)
 						.filter((v) => v.startsWith(`R_9_`))
-						.some((v) => resultData[v] != 0 && resultData[v] != "")
+						.some((v) => resultData[v] != "")
 				) {
 					return true;
 				}
@@ -159,7 +159,7 @@ export default function useSurveyCustom(surveyType: string, surveyPageNum: numbe
 				if (
 					Object.keys(resultData)
 						.filter((v) => v.startsWith(`R_8_`))
-						.some((v) => resultData[v] != 0 && resultData[v] != "")
+						.some((v) => resultData[v] != "")
 				) {
 					return true;
 				}

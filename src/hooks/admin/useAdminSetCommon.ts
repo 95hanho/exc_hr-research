@@ -1,13 +1,16 @@
-// hooks/survey/useSurveyCommonInfo.ts
 import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";
 import { AdminCommonInfo } from "../../types/common";
 
-// 설문 시작하기
+interface AdminSetCommonParam extends AdminCommonInfo {
+	surveyYear: string;
+}
+
+// 공통 설문정보 수정
 export function useAdminSetCommon() {
 	return useMutation({
-		mutationFn: async ({ color, start_date, end_date, open_status, surveyYear }: AdminCommonInfo & { surveyYear: string }) => {
+		mutationFn: async ({ color, start_date, end_date, open_status, surveyYear }: AdminSetCommonParam) => {
 			const res = await post_urlFormData(API_URL.ADMIN_COMMON_SET, { color, start_date, end_date, open_status, s_year: surveyYear });
 			return res.data;
 		},

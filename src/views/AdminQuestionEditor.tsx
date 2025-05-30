@@ -52,7 +52,7 @@ export default function AdminQuestionEditor() {
 	const [top_menuList, set_top_menuList] = useState<string[]>([]); //
 	const [munhangs, set_munhangs] = useState<Munhang[]>([]); // 질문문항들
 	const [resultData] = useState<ResultData>({}); // 결과데이터(관리자에선 쓰진않음)
-	const [initData, set_initData] = useState<Record<string, string>>({}); // 초기데이터 문항만들면 자동으로 만들어짐
+	const [initData, set_initData] = useState<ResultData>({}); // 초기데이터 문항만들면 자동으로 만들어짐
 
 	// required 설정
 	const [requiredOn, set_requiredOn] = useState<boolean>(false);
@@ -195,26 +195,23 @@ export default function AdminQuestionEditor() {
 		} else {
 			const newInitData = change_initData();
 
-			const obj = {
-				top_menu_list_jsonData: JSON.stringify({ top_menuList }),
+			const param_obj = {
+				surveyType,
+				surveyPage,
+				top_menuList,
 				head_title: top_menuList[surveyPageNum - 1],
-				jsonData: JSON.stringify({
-					requiredList,
-					munhangs,
-					initData: newInitData,
-				}),
+				requiredList,
+				munhangs,
+				initData: newInitData,
 			};
-			setQuestion(
-				{ surveyType, surveyPage, ...obj },
-				{
-					onSuccess(data) {
-						if (data.code === 200) dispatch({ type: "modal/on_modal_alert", payload: "저장 완료" });
-						else {
-							dispatch({ type: "modal/on_modal_alert", payload: "오류 발생" });
-						}
-					},
-				}
-			);
+			setQuestion(param_obj, {
+				onSuccess(data) {
+					if (data.code === 200) dispatch({ type: "modal/on_modal_alert", payload: "저장 완료" });
+					else {
+						dispatch({ type: "modal/on_modal_alert", payload: "오류 발생" });
+					}
+				},
+			});
 		}
 		return true;
 	};

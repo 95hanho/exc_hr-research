@@ -1,12 +1,12 @@
-// hooks/survey/useSurveyCommonInfo.ts
 import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";
+import { ResultData } from "../../types/survey";
 
 // 설문 시작하기
 export function useAdminSurveyTableMake() {
 	return useMutation({
-		mutationFn: async ({ surveyType, surveyPage, initData }: { surveyType: string; surveyPage: string; initData: Record<string, string> }) => {
+		mutationFn: async ({ surveyType, surveyPage, initData }: { surveyType: string; surveyPage: string; initData: ResultData }) => {
 			const res = await post_urlFormData(API_URL.ADMIN_STORE_TABLE, { surveyType, surveyPage, ...initData });
 			return res.data;
 		},

@@ -1,4 +1,3 @@
-// hooks/survey/useSurveyCommonInfo.ts
 import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";

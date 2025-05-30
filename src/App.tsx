@@ -17,7 +17,7 @@ const AppWrapper = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 		if (isSuccess && data.result) {
 			if (data.result.length > 0) {
 				const obj: Partial<CommonInfo> = {};
-				data.result.forEach((v: { type: number; data: string }) => {
+				data.result.forEach((v) => {
 					if (v.type === 3) obj.color = v.data;
 					if (v.type === 4) obj.start_date = v.data;
 					if (v.type === 5) obj.end_date = v.data;

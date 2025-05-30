@@ -5,7 +5,6 @@ import SurveyTop from "../components/survey/SurveyTop";
 import Survey_footer from "../components/survey/SurveyFooter";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 import { useSurveyStart } from "../hooks/survey/useSurveyStart";
-// import { useSurveyInfo } from "../hooks/survey/useSurveyInfo";
 import { setSurveyToken } from "../lib/ui";
 
 export default function SurveyIntroPage() {
@@ -13,7 +12,6 @@ export default function SurveyIntroPage() {
 	const dispatch = useAppDispatch();
 	const { surveyType } = useParams() as { surveyType: string };
 	const commonInfo = useAppSelector((state) => state.common.commonInfo);
-	// const { isError } = useSurveyInfo(surveyType);
 	const { mutate: startSurvey } = useSurveyStart();
 
 	let urlType = "";
@@ -69,6 +67,7 @@ export default function SurveyIntroPage() {
 			}
 		);
 	};
+
 	useEffect(() => {
 		dispatch({ type: "common/change_curYear", payload: surveyYear });
 	}, [dispatch, navigate, surveyYear]);
