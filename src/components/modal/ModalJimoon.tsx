@@ -39,7 +39,7 @@ export default function ModalJimoon({
 				}
 			}, 500);
 		}
-	}, [modalOn]);
+	}, [modalOn, excel]);
 	return (
 		<>
 			<div className="modal-wrap" ref={modalEle}>

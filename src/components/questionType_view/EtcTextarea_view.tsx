@@ -1,8 +1,8 @@
-import { EtcTextareaQuestion } from "../../types/survey";
+import { EtcTextareaSubContents } from "../../types/question";
 
 interface EtcTextareaProps {
 	R_num: number;
-	subContents?: EtcTextareaQuestion["subContents"];
+	subContents?: EtcTextareaSubContents;
 }
 
 export default function EtcTextarea_view({ subContents, R_num }: EtcTextareaProps) {

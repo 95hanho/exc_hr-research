@@ -1,9 +1,10 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { MultiTableQuestion, MultiTableTdCell, MultiTableThCell, SurveyQuestionProps } from "../../types/survey";
+import { SurveyQuestionProps } from "../../types/survey";
+import { MultiTableSubContents, MultiTableTdCell, MultiTableThCell } from "../../types/question";
 
 interface MultiTableProps extends SurveyQuestionProps {
-	subContents: MultiTableQuestion["subContents"];
+	subContents: MultiTableSubContents;
 }
 
 /*

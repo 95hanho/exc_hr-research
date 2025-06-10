@@ -11,7 +11,6 @@ import { useAdminSurveyCommonInfo } from "../hooks/admin/useAdminSurveyCommonInf
 import { AdminCommonInfo, AdminSurveyInfo } from "../types/common";
 import { useAdminSetCommon } from "../hooks/admin/useAdminSetCommon";
 import { useAdminSurveyInfo } from "../hooks/admin/useAdminSurveyInfo";
-// import "moment/locale/ko";
 
 type CustomInputProps = {
 	value?: string;

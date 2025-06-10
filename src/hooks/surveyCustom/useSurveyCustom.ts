@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { /* MultiTableTdKeyword, */ ResultData } from "../../types/survey";
+import { ResultData } from "../../types/survey";
 
 // 서베이 커스텀 사항들
 export default function useSurveyCustom(surveyType: string, surveyPageNum: number) {

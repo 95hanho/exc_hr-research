@@ -1,6 +1,6 @@
 /* 관리자 설문 문항 설정 */
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AdminMultiTable from "../components/admin/AdminMultiTable.js";
 import AdminMultiChoice from "../components/admin/AdminMultiChoice.js";
 import AdminEtcText from "../components/admin/AdminEtcText.js";
@@ -9,24 +9,22 @@ import MultiTable from "../components/questionType/MultiTable.jsx";
 import MultiChoice from "../components/questionType/MultiChoice.jsx";
 import EtcText from "../components/questionType/EtcText.jsx";
 import EtcTextarea from "../components/questionType/EtcTextarea.jsx";
-// import { adminGetSurveyInfo, adminSetSurveyInfo } from "../compositions/admin.js";
-// import AdminMultiTableExcel from "../components/admin/AdminMultiTableExcel.js";
 import AllLoding from "../components/AllLoding.js";
 import { copyText } from "../lib/ui.js";
-import {
-	EtcTextareaQuestion,
-	EtcTextQuestion,
-	MultiChoiceQuestion,
-	MultiTableQuestion,
-	Munhang,
-	Question,
-	RequiredHideRule,
-	ResultData,
-} from "../types/survey.js";
+import { changeSubcontentsParams, RequiredHideRule, ResultData } from "../types/survey.js";
 import { useAppDispatch } from "../hooks/useRedux.js";
 import { useAdminSetSurveyQuestion } from "../hooks/admin/useAdminSetSurveyQuestion.js";
 import { useAdminSurveyQuestion } from "../hooks/admin/useAdminSurveyQuestion.js";
 import { useAdminSurveyTableMake } from "../hooks/admin/useAdminSurveyTableMake.js";
+import {
+	EmptyQuestion,
+	EtcTextareaSubContents,
+	EtcTextSubContents,
+	MultiChoiceSubContents,
+	MultiTableSubContents,
+	Munhang,
+	Question,
+} from "../types/question.js";
 
 export default function AdminQuestionEditor() {
 	const { surveyType, surveyPage } = useParams() as { surveyType: string; surveyPage: string };
@@ -65,21 +63,23 @@ export default function AdminQuestionEditor() {
 		dispatch({ type: "modal/on_modal_alert", payload: `관리자에선 결과 작동이 안됨` });
 	};
 	// 문항 바꾸기
-	const changeSubcontents = (R_num: number, subContents: Question["subContents"]) => {
+	const changeSubcontents = useCallback(({ R_num, subContents, qType }: changeSubcontentsParams) => {
 		set_munhangs((prev) => {
-			let rIdx = 0;
-			const newMunhangs = [...prev];
-			newMunhangs.map((newMunhang) => {
-				newMunhang.questions.map((question) => {
-					rIdx++;
-					if (rIdx == R_num) {
-						question.subContents = subContents;
+			return prev.map((munhang) => ({
+				...munhang,
+				questions: munhang.questions.map((question) => {
+					if (question.R_num != R_num) return question;
+					else {
+						return {
+							...question,
+							qType,
+							subContents,
+						} as Question;
 					}
-				});
-			});
-			return [...newMunhangs];
+				}),
+			}));
 		});
-	};
+	}, []);
 	// 초기데이터 제작
 	const change_initData = () => {
 		let obj = {};
@@ -100,7 +100,7 @@ export default function AdminQuestionEditor() {
 	const initData_make = (rNum: number, qType: Question["qType"], subCont: Question["subContents"]) => {
 		const arr = [];
 		if (qType === "MultiTable") {
-			const sc = subCont as MultiTableQuestion["subContents"];
+			const sc = subCont as MultiTableSubContents;
 			if (sc.table_th instanceof Array) {
 				sc.table_th.map((th, thIdx) => {
 					if (th === "R_etc") arr.push(`R_${rNum}_th_${thIdx + 1}_etc`);
@@ -119,7 +119,7 @@ export default function AdminQuestionEditor() {
 					) {
 						arr.push(`R_${rNum}_${trIdx + 1}_${tdIdx + 1}`);
 					} else if (td === "R_check") {
-						const tableSubCont = subCont as MultiTableQuestion["subContents"];
+						const tableSubCont = subCont as MultiTableSubContents;
 						arr.push(`R_${rNum}_n_${tdIdx + 1}_che`);
 						if (tableSubCont.checkType == 3) {
 							arr.push(`R_${rNum}_cheOrder`);
@@ -142,7 +142,7 @@ export default function AdminQuestionEditor() {
 				});
 			});
 		} else if (qType === "MultiChoice") {
-			const sc = subCont as MultiChoiceQuestion["subContents"];
+			const sc = subCont as MultiChoiceSubContents;
 			arr.push(`R_${rNum}_multi`);
 			sc.choices?.map((v) => {
 				if (v.content === "R_etc") arr.push(`R_${rNum}_etc`);
@@ -239,7 +239,7 @@ export default function AdminQuestionEditor() {
 		}
 	};
 
-	const init = async () => {
+	const init = useCallback(async () => {
 		set_loding(true);
 		console.log(surveyType, surveyPage);
 		if (isSuccess) {
@@ -266,7 +266,7 @@ export default function AdminQuestionEditor() {
 								//   title: "귀사(기관)에서 실시한 교육 형태별 참가인원 비율을 기술해 주십시오.<br>(항목별 가로 합이 100%가 되도록 기술)",
 								title: "",
 								subContents: {},
-							},
+							} as EmptyQuestion,
 						],
 					},
 				]);
@@ -284,12 +284,12 @@ export default function AdminQuestionEditor() {
 			navigate(`/admin/main/${surveyType.substring(surveyType.length - 4, surveyType.length)}`, { replace: true });
 		}
 		set_loding(false);
-	};
+	}, [dispatch, error, isError, isSuccess, navigate, questionData, surveyPage, surveyPageNum, surveyType]);
 
 	useEffect(() => {
 		init();
 		return () => {};
-	}, [location.pathname, isSuccess, questionData]);
+	}, [location.pathname, isSuccess, questionData, init]);
 
 	if (loding) return <AllLoding />;
 
@@ -779,62 +779,54 @@ export default function AdminQuestionEditor() {
 																					</select>
 																				</div>
 																				<h3>- 설정</h3>
-																				{question.qType === "MultiTable" && !question.tableType && (
+																				{question.qType === "MultiTable" && (
 																					<AdminMultiTable
-																						subContents={(question as MultiTableQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as MultiTableSubContents}
 																						change_initData={change_initData}
 																					/>
 																				)}
-																				{/* 안쓰는거 같은데 확인해봐야함.... */}
-																				{/* {question.qType === "MultiTable" &&
-																					question.tableType === "excelTable" && (
-																						<AdminMultiTableExcel
-																							subContents={(question as MultiTableQuestion).subContents}
-																							{...commonProps}
-																						/>
-																					)} */}
 																				{question.qType === "MultiChoice" && (
 																					<AdminMultiChoice
-																						subContents={(question as MultiChoiceQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as MultiChoiceSubContents}
 																					/>
 																				)}
 																				{question.qType === "EtcText" && (
 																					<AdminEtcText
-																						subContents={(question as EtcTextQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as EtcTextSubContents}
 																					/>
 																				)}
 																				{question.qType === "EtcTextarea" && (
 																					<AdminEtcTextarea
-																						subContents={(question as EtcTextareaQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as EtcTextareaSubContents}
 																					/>
 																				)}
 																				<h3>- 결과</h3>
 																				{question.qType === "MultiTable" && (
 																					<MultiTable
-																						subContents={(question as MultiTableQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as MultiTableSubContents}
 																					/>
 																				)}
 																				{question.qType === "MultiChoice" && (
 																					<MultiChoice
-																						subContents={(question as MultiChoiceQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as MultiChoiceSubContents}
 																					/>
 																				)}
 																				{question.qType === "EtcText" && (
 																					<EtcText
-																						subContents={(question as EtcTextQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as EtcTextSubContents}
 																					/>
 																				)}
 																				{question.qType === "EtcTextarea" && (
 																					<EtcTextarea
-																						subContents={(question as EtcTextareaQuestion).subContents}
 																						{...commonProps}
+																						subContents={question.subContents as EtcTextareaSubContents}
 																					/>
 																				)}
 																			</div>
@@ -1005,7 +997,7 @@ export default function AdminQuestionEditor() {
 																							{
 																								title: "",
 																								subContents: {},
-																							},
+																							} as EmptyQuestion,
 																							...bList,
 																						];
 
@@ -1033,7 +1025,7 @@ export default function AdminQuestionEditor() {
 																							{
 																								title: "",
 																								subContents: {},
-																							},
+																							} as EmptyQuestion,
 																							...bList,
 																						];
 
@@ -1064,7 +1056,7 @@ export default function AdminQuestionEditor() {
 												{
 													qType: "",
 													title: "",
-													alert: null,
+													alert: undefined,
 													subPadding: false,
 													subContents: {},
 												},

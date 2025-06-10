@@ -1,3 +1,4 @@
+/* 없는 페이지 */
 export default function NotPage() {
 	return (
 		<div id="notPage">

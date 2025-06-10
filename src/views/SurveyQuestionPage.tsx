@@ -11,12 +11,7 @@ import { getSurveyToken, target_scrFocus } from "../lib/ui.js";
 import { useSurveyStore } from "../hooks/survey/useSurveyStore.js";
 import { surveyQuestionFail, surveyQuestionSuccess, useSurveyQuestion } from "../hooks/survey/useSurveyQuestion.js";
 import {
-	EtcTextareaQuestion,
-	EtcTextQuestion,
-	MultiChoiceQuestion,
-	MultiTableQuestion,
 	// MultiTableTdKeyword,
-	Munhang,
 	MunhangVisibilityRule,
 	ResultData,
 	SurveyQuestionProps,
@@ -25,6 +20,7 @@ import {
 import useSurveyCustom from "../hooks/surveyCustom/useSurveyCustom.js";
 import SurveyQuestionPageFooter from "../components/survey/SurveyQuestionPageFooter.js";
 import AllLoding from "../components/AllLoding.js";
+import { EtcTextareaSubContents, EtcTextSubContents, MultiChoiceSubContents, MultiTableSubContents, Munhang } from "../types/question.js";
 
 export default function SurveyQuestionPage() {
 	const location = useLocation();
@@ -121,7 +117,7 @@ export default function SurveyQuestionPage() {
 						continue;
 					}
 					if (question.qType === "MultiTable") {
-						const checkTd: MultiTableQuestion["subContents"]["table_td"] = question.subContents.table_td;
+						const checkTd: MultiTableSubContents["table_td"] = question.subContents.table_td;
 						checkAttr = checkAttr.filter((v) => !v.endsWith("_etc"));
 						const per_obj: Record<string, number> = {};
 						for (const attr of checkAttr) {
@@ -322,7 +318,7 @@ export default function SurveyQuestionPage() {
 							}
 							// R_check에서 순서체크에서 사용
 							function cheOrder_resultCheck() {
-								const subCont = question.subContents as MultiTableQuestion["subContents"];
+								const subCont = question.subContents as MultiTableSubContents;
 								const maxOrder = subCont.checkLimit?.maxOrder || 1;
 								const checkCount = resultData[attr] ? String(resultData[attr]).split(",").length : 0;
 								if (maxOrder > checkCount) {
@@ -822,26 +818,26 @@ export default function SurveyQuestionPage() {
 																			></div>
 																			{question.qType === "MultiTable" && (
 																				<MultiTable
-																					subContents={(question as MultiTableQuestion).subContents}
 																					{...commonProps}
+																					subContents={question.subContents as MultiTableSubContents}
 																				/>
 																			)}
 																			{question.qType === "MultiChoice" && (
 																				<MultiChoice
-																					subContents={(question as MultiChoiceQuestion).subContents}
 																					{...commonProps}
+																					subContents={question.subContents as MultiChoiceSubContents}
 																				/>
 																			)}
 																			{question.qType === "EtcText" && (
 																				<EtcText
-																					subContents={(question as EtcTextQuestion).subContents}
 																					{...commonProps}
+																					subContents={question.subContents as EtcTextSubContents}
 																				/>
 																			)}
 																			{question.qType === "EtcTextarea" && (
 																				<EtcTextarea
-																					subContents={(question as EtcTextareaQuestion).subContents}
 																					{...commonProps}
+																					subContents={question.subContents as EtcTextareaSubContents}
 																				/>
 																			)}
 																		</div>

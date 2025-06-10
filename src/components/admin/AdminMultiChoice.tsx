@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalJimoon from "../modal/ModalJimoon";
-import { AdminSurveyQuestionProps, MultiChoiceQuestion } from "../../types/survey";
+import { AdminSurveyQuestionProps } from "../../types/survey";
+import { MultiChoiceSubContents } from "../../types/question";
 
 interface MultiChoiceProps extends AdminSurveyQuestionProps {
-	subContents: MultiChoiceQuestion["subContents"];
+	subContents: MultiChoiceSubContents;
 }
 /*
  * 다중객관식
  */
 export default function AdminMultiChoice({ subContents, R_num, changeSubcontents }: MultiChoiceProps) {
-	const executeChange = () => {
-		changeSubcontents(R_num, subContents);
-	};
+	const executeChange = useCallback(() => {
+		changeSubcontents({ R_num, subContents, qType: "MultiChoice" });
+	}, [R_num, subContents, changeSubcontents]);
 
 	useEffect(() => {
 		if (!subContents.choices) {
@@ -22,7 +23,7 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 			];
 			executeChange();
 		}
-	}, []);
+	}, [executeChange, subContents]);
 
 	const [modalOn, set_modalOn] = useState(false);
 	// 엑셀 지문넣기

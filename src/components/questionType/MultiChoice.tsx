@@ -1,14 +1,15 @@
 import { useDispatch } from "react-redux";
-import { MultiChoiceQuestion, SurveyQuestionProps } from "../../types/survey";
+import { SurveyQuestionProps } from "../../types/survey";
+import { MultiChoiceSubContents } from "../../types/question";
 
 interface MultiChoiceProps extends SurveyQuestionProps {
-	subContents: MultiChoiceQuestion["subContents"];
+	subContents: MultiChoiceSubContents;
 }
 
 interface ChoiceGroupProps extends SurveyQuestionProps {
-	subContents: MultiChoiceQuestion["subContents"];
-	choices: MultiChoiceQuestion["subContents"]["choices"];
-	allChoices: MultiChoiceQuestion["subContents"]["choices"];
+	subContents: MultiChoiceSubContents;
+	choices: MultiChoiceSubContents["choices"];
+	allChoices: MultiChoiceSubContents["choices"];
 	halfIndex: number;
 	multiChoiceData: string;
 }

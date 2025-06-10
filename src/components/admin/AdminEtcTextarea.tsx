@@ -1,18 +1,19 @@
-import { useEffect } from "react";
-import { AdminSurveyQuestionProps, EtcTextareaQuestion } from "../../types/survey";
+import { useCallback, useEffect } from "react";
+import { AdminSurveyQuestionProps } from "../../types/survey";
+import { EtcTextareaSubContents } from "../../types/question";
 
 interface EtcTextareaProps extends AdminSurveyQuestionProps {
-	subContents: EtcTextareaQuestion["subContents"];
+	subContents: EtcTextareaSubContents;
 }
 
 export default function AdminEtcTextarea({ subContents, R_num, changeSubcontents }: EtcTextareaProps) {
-	const executeChange = () => {
-		changeSubcontents(R_num, subContents);
-	};
+	const executeChange = useCallback(() => {
+		changeSubcontents({ R_num, subContents, qType: "EtcTextarea" });
+	}, [changeSubcontents, R_num, subContents]);
 
 	useEffect(() => {
 		executeChange();
-	}, []);
+	}, [executeChange]);
 
 	return (
 		<div className="textarea">

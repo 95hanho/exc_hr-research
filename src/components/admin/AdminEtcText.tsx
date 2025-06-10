@@ -1,18 +1,19 @@
-import { useEffect } from "react";
-import { AdminSurveyQuestionProps, EtcTextQuestion } from "../../types/survey";
+import { useCallback, useEffect } from "react";
+import { AdminSurveyQuestionProps } from "../../types/survey";
+import { EtcTextSubContents } from "../../types/question";
 
 interface EtcTextProps extends AdminSurveyQuestionProps {
-	subContents: EtcTextQuestion["subContents"];
+	subContents: EtcTextSubContents;
 }
 
 export default function AdminEtcText({ subContents, R_num, changeSubcontents }: EtcTextProps) {
-	const executeChange = () => {
-		changeSubcontents(R_num, subContents);
-	};
+	const executeChange = useCallback(() => {
+		changeSubcontents({ R_num, subContents, qType: "EtcText" });
+	}, [changeSubcontents, R_num, subContents]);
 
 	useEffect(() => {
 		executeChange();
-	}, []);
+	}, [executeChange]);
 
 	return (
 		<>

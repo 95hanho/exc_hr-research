@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { get_normal } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
-import { Munhang } from "../../types/survey";
+import { Munhang } from "../../types/question";
 
 export type surveyQuestionTestSuccess = {
 	code: 200;

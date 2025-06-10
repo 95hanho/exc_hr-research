@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import ModalJimoon from "../modal/ModalJimoon";
-import { AdminSurveyQuestionProps, MultiTableQuestion, MultiTableThCell } from "../../types/survey";
+import { AdminSurveyQuestionProps } from "../../types/survey";
+import { MultiTableSubContents, MultiTableThCell } from "../../types/question";
 
 interface MultiTableProps extends AdminSurveyQuestionProps {
-	subContents: MultiTableQuestion["subContents"];
+	subContents: MultiTableSubContents;
 	change_initData: () => Record<string, string>;
 }
 
@@ -14,9 +15,9 @@ interface MultiTableProps extends AdminSurveyQuestionProps {
 export default function AdminMultiTable({ subContents, R_num, changeSubcontents, change_initData }: MultiTableProps) {
 	const dispatch = useDispatch();
 
-	const executeChange = () => {
-		changeSubcontents(R_num, subContents);
-	};
+	const executeChange = useCallback(() => {
+		changeSubcontents({ R_num, subContents, qType: "MultiTable" });
+	}, [R_num, changeSubcontents, subContents]);
 
 	/* 엑셀 자동으로 넣기 */
 	const [modalOn, set_modalOn] = useState(false);
@@ -53,7 +54,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 		if (!subContents.table_th) subContents.table_th = [[""]];
 		if (!subContents.table_td) subContents.table_td = [[""]];
 		executeChange();
-	}, []);
+	}, [executeChange, subContents]);
 
 	return (
 		<div className="table adminMultiTable">

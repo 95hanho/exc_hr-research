@@ -30,16 +30,7 @@ export const target_scrFocus_instant = (id: string) => {
 		behavior: "instant", // 부드러운 스크롤
 	});
 };
-// 아이디 기반 포커스 또는 스크롤 - ref 딕셔너리 처리로 바꿔봄...
-// export const info_target_scrFocus = (id: string) => {
-// 	const target = document.getElementById(id);
-// 	if (!target) return;
-// 	if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-// 		target.focus();
-// 	} else {
-// 		target.scrollIntoView({ behavior: "smooth", block: "center" });
-// 	}
-// };
+// 포커스 또는 스크롤 - ref 딕셔너리 처리로 바꿔봄...
 export const info_target_scrFocus = (element: HTMLElement | null) => {
 	if (!element) return;
 
