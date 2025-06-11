@@ -3,7 +3,8 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const instance = axios.create({
-	baseURL: "https://apihome.exc.co.kr",
+	// baseURL: "https://apihome.exc.co.kr",
+	baseURL: process.env.VITE_BASEURL
 });
 
 const AxiosInterceptor = ({ children }: Readonly<{ children: React.ReactNode }>) => {

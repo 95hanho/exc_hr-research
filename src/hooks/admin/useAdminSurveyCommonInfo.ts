@@ -17,17 +17,13 @@ export function useAdminSurveyCommonInfo(surveyYear: string) {
 		queryKey: ["adminSurveyCommonInfo", { surveyYear }],
 		queryFn: () => get_normal(API_URL.ADMIN_COMMON, { s_year: surveyYear }),
 		select: ({ data }): AdminSurveyCommonInfo => {
+			console.log(data);
 			const common_info: AdminCommonInfo = {};
-			data.result.common_info.forEach((v: { tesc_type: 3 | 4 | 5; tesc_data: string } | { tesc_type: 6; tesc_data: 1 | 2 }) => {
-				if (v.tesc_type === 3) common_info.color = v.tesc_data;
-				else if (v.tesc_type === 4) {
-					common_info.start_date = v.tesc_data;
-				} else if (v.tesc_type === 5) {
-					common_info.end_date = v.tesc_data;
-				} else if (v.tesc_type === 6) {
-					common_info.open_status = v.tesc_data;
-				}
-			});
+			common_info.color = data.result.common_info.backcolor;
+			common_info.start_date = data.result.common_info.start_date;
+			common_info.end_date = data.result.common_info.end_date;
+			common_info.open_status = data.result.common_info.remote_status;
+			console.log(common_info);
 
 			const company_list = data.result.company_list.map((v: Record<string, string>) => {
 				return {

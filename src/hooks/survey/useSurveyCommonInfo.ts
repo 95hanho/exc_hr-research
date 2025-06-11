@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { get_normal } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 
-interface resultList {
-	type: 3 | 4 | 5;
-	data: string;
-}
 interface SurveyCommonInfoResponse {
-	result: resultList[];
+	result: {
+		backcolor: string;
+		color: string | null;
+		end_date: string;
+		start_date: string;
+	};
 	remote_status: boolean;
 	ip_status: boolean;
 }

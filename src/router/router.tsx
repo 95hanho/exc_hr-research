@@ -116,7 +116,7 @@ const router = createBrowserRouter(
 		},
 	],
 	{
-		basename: "/RAC",
+		basename: "/hr_survey",
 	}
 );
 
