@@ -29,39 +29,26 @@ export interface PersonalInfo {
 	R_COMMON_1_10?: string;
 	recommend?: string;
 }
+// 설문 결과값 데이터
 export type ResultData = Record<string, string>;
-export type SurveyStoreData = Record<string, string | number | boolean | null>;
+export type SurveyStoreData = {
+	progress_raw?: string;
+	end?: boolean;
+} & ResultData;
 export interface SurveyQuestionProps {
 	resultData: ResultData;
 	changeResultData: (e?: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, addObj?: ResultData) => void;
 	R_num: number;
 }
 
-export type changeSubcontentsParams =
-	| {
-			R_num: number;
-			subContents: MultiTableSubContents;
-			qType: "MultiTable";
-	  }
-	| {
-			R_num: number;
-			subContents: MultiChoiceSubContents;
-			qType: "MultiChoice";
-	  }
-	| {
-			R_num: number;
-			subContents: EtcTextSubContents;
-			qType: "EtcText";
-	  }
-	| {
-			R_num: number;
-			subContents: EtcTextareaSubContents;
-			qType: "EtcTextarea";
-	  };
+export type changeSubcontentsParams = {
+	R_num: number;
+	subContents: MultiTableSubContents | MultiChoiceSubContents | EtcTextSubContents | EtcTextareaSubContents;
+};
 
 export interface AdminSurveyQuestionProps {
-	changeSubcontents: (changeValue: changeSubcontentsParams) => void;
 	R_num: number;
+	munhangsDispatch: React.Dispatch<MunhangsAction>;
 }
 
 // 필수사항(required) 설정규칙
@@ -75,4 +62,3 @@ export type MunhangVisibilityRule = {
 	values: string[];
 	hide: string[];
 };
-// 설문 결과값 데이터

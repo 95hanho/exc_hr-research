@@ -47,7 +47,7 @@ export type MultiTableTdCell =
 	| string; // table_td 셀 하나에 들어갈 수 있는 타입들
 export type MultiTableSubContents = {
 	topAlert?: "weightDoubleFive" | "addDirectly" | string[]; // string[]일 경우 표 제목 행
-	topAlertMent: string; // topAlert 직접 추가 HTML
+	topAlertMent?: string; // topAlert 직접 추가 HTML
 	table_th: MultiTableThKey | MultiTableThCell[] | MultiTableThCell[][];
 	table_td: MultiTableTdCell[][];
 	fCount?: number; // R_relCheck에서 사용됨
@@ -71,7 +71,7 @@ export type MultiChoiceSubContents = {
 	count?: number;
 	requiredCount?: boolean;
 	half?: boolean;
-	choices?: MultiChoiceChoice[]; // 구체화 필요
+	choices: MultiChoiceChoice[];
 	plural?: boolean; // 다중선택 여부
 };
 /* 주관식(단답형) 질문 */
@@ -88,7 +88,7 @@ export type EtcTextareaSubContents = {
 // Question 전체 유니언 타입
 type QuestionCommon = {
 	hide?: boolean;
-	R_num?: number;
+	R_num: number;
 	title: string;
 	alert?: {
 		color: string;
@@ -111,8 +111,8 @@ export type Munhang = {
 	title: string;
 	mainTitle?: string;
 	mainAlert?: {
-		color: string;
-		content: string;
+		color?: string;
+		content?: string;
 	};
 	required?: Record<string, string>;
 	questions: Question[];

@@ -102,7 +102,7 @@ export default function SurveyQuestionPage_view() {
 														{munhang.mainAlert && (
 															<div
 																className={"alert bg-" + munhang.mainAlert.color}
-																dangerouslySetInnerHTML={{ __html: munhang.mainAlert.content }}
+																dangerouslySetInnerHTML={{ __html: String(munhang.mainAlert.content) }}
 															></div>
 														)}
 														{munhang.questions.map((question, qIdx) => {

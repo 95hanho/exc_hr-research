@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import ModalJimoon from "../modal/ModalJimoon";
 import { AdminSurveyQuestionProps } from "../../types/survey";
-import { MultiTableSubContents, MultiTableThCell } from "../../types/question";
+import { MultiTableSubContents, MultiTableTdCell, MultiTableThCell } from "../../types/question";
+import MunhangTextarea from "../admin/MunhangTextarea";
+import MunhangText from "../admin/MunhangText";
 
 interface MultiTableProps extends AdminSurveyQuestionProps {
 	subContents: MultiTableSubContents;
@@ -12,80 +14,94 @@ interface MultiTableProps extends AdminSurveyQuestionProps {
 /*
  * 여러용도테이블
  */
-export default function AdminMultiTable({ subContents, R_num, changeSubcontents, change_initData }: MultiTableProps) {
+export default function AdminMultiTable({ subContents, R_num, change_initData, munhangsDispatch }: MultiTableProps) {
 	const dispatch = useDispatch();
 
-	const executeChange = useCallback(() => {
-		changeSubcontents({ R_num, subContents, qType: "MultiTable" });
-	}, [R_num, changeSubcontents, subContents]);
+	const t_changeSubcontents = (in_subContents: Partial<MultiTableSubContents>, options?: { deleteKeys?: (keyof MultiTableSubContents)[] }) => {
+		const merged = { ...subContents, ...in_subContents };
+		if (options?.deleteKeys) {
+			for (const key of options.deleteKeys) {
+				delete merged[key];
+			}
+		}
+
+		munhangsDispatch({
+			type: "change_q_subcontents",
+			R_num,
+			subContents: merged,
+		});
+	};
 
 	/* 엑셀 자동으로 넣기 */
 	const [modalOn, set_modalOn] = useState(false);
 	const [inputIndex, set_inputIndex] = useState(0);
 	// 엑셀 지문넣기
 	const input_jimoon = (excelData: string[][]) => {
-		excelData.map((v, i) => {
-			if (!subContents.table_td[i]) subContents.table_td.push(new Array(subContents.table_td[0].length).fill(""));
-			subContents.table_td[i].map((td, tdIdx, tdArr) => {
-				if (inputIndex == tdIdx) {
-					tdArr[tdIdx] = v[0] === "기타" ? "R_etc" : v[0];
-				} else if (!td) {
-					// const list = [...subContents.table_td];
+		const newTable_td = subContents.table_td.map((row) => [...row]); // 깊은 복사
+
+		excelData.forEach((v, i) => {
+			// row가 없다면 새로 추가
+			if (!newTable_td[i]) {
+				newTable_td[i] = new Array(subContents.table_td[0].length).fill("");
+			}
+
+			newTable_td[i] = newTable_td[i].map((td, tdIdx) => {
+				if (inputIndex === tdIdx) return v[0] === "기타" ? "R_etc" : v[0];
+				if (!td) {
 					if (i > 0) {
-						const value = subContents.table_td[i - 1][tdIdx];
+						const value = newTable_td[i - 1][tdIdx];
 						if (value === "$total") {
-							subContents.table_td[i - 1][tdIdx] = "R_per";
-							tdArr[tdIdx] = "$total";
+							newTable_td[i - 1][tdIdx] = "R_per";
+							return "$total";
 						} else if (value !== "R_etc" && (value.startsWith("R_") || value.startsWith("$"))) {
-							tdArr[tdIdx] = value;
+							return value;
 						} else {
-							tdArr[tdIdx] = "";
+							return "";
 						}
-					} else {
-						tdArr[tdIdx] = "";
 					}
+					return "";
 				}
+
+				return td;
 			});
 		});
-		executeChange();
-	};
 
-	useEffect(() => {
-		if (!subContents.table_th) subContents.table_th = [[""]];
-		if (!subContents.table_td) subContents.table_td = [[""]];
-		executeChange();
-	}, [executeChange, subContents]);
+		t_changeSubcontents({ table_td: newTable_td });
+	};
 
 	return (
 		<div className="table adminMultiTable">
 			<div>
 				<button
+					tabIndex={-1}
 					className={`admin-plma${subContents.topAlert === "weightDoubleFive" ? " red" : ""}`}
-					onClick={() => {
-						if (subContents.topAlert === "weightDoubleFive") subContents.topAlert = undefined;
-						else subContents.topAlert = "weightDoubleFive";
-						executeChange();
-					}}
+					onClick={() =>
+						t_changeSubcontents({
+							topAlert: subContents.topAlert === "weightDoubleFive" ? undefined : "weightDoubleFive",
+						})
+					}
 				>
 					중요도&수행도 알림{subContents.topAlert === "weightDoubleFive" ? "-" : "+"}
 				</button>{" "}
 				<button
+					tabIndex={-1}
 					className={`admin-plma${subContents.topAlert instanceof Array ? " red" : ""}`}
-					onClick={() => {
-						if (subContents.topAlert instanceof Array) subContents.topAlert = undefined;
-						else subContents.topAlert = ["전혀 아님", "아님", "보통", "그러함", "매우 그러함"];
-						executeChange();
-					}}
+					onClick={() =>
+						t_changeSubcontents({
+							topAlert: subContents.topAlert instanceof Array ? undefined : ["전혀 아님", "아님", "보통", "그러함", "매우 그러함"],
+						})
+					}
 				>
 					가중치알림{subContents.topAlert instanceof Array ? "-" : "+"}
 				</button>{" "}
 				<button
+					tabIndex={-1}
 					className={`admin-plma${subContents.topAlert === "addDirectly" ? " red" : ""}`}
-					onClick={() => {
-						if (subContents.topAlert === "addDirectly") subContents.topAlert = undefined;
-						else subContents.topAlert = "addDirectly";
-						executeChange();
-					}}
+					onClick={() =>
+						t_changeSubcontents({
+							topAlert: subContents.topAlert === "addDirectly" ? undefined : "addDirectly",
+						})
+					}
 				>
 					알림 직접추가{subContents.topAlert === "addDirectly" ? "-" : "+"}
 				</button>
@@ -93,15 +109,14 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 			{subContents.topAlert === "addDirectly" && (
 				<div>
 					알림 내용(HTML) :{" "}
-					<textarea
-						tabIndex={0}
+					<MunhangTextarea
 						value={subContents.topAlertMent || ""}
-						rows={(subContents.topAlertMent?.match(/\n/g)?.length || 0) + 1 || 1}
-						onChange={(e) => {
-							subContents.topAlertMent = e.target.value;
-							executeChange();
-						}}
-					></textarea>
+						onChange={(value) =>
+							t_changeSubcontents({
+								topAlertMent: value,
+							})
+						}
+					/>
 				</div>
 			)}
 			<div>
@@ -112,31 +127,30 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 					className="form-control"
 					onChange={(e) => {
 						const val = Number(e.target.value);
-						delete subContents.topAlert;
-						delete subContents.table_set;
+						const newSubContents: Partial<MultiTableSubContents> = {};
 						if (val == 1) {
-							subContents.table_th = [[""]];
-							subContents.table_td = [[""]];
+							newSubContents.table_th = [[""]];
+							newSubContents.table_td = [[""]];
 						} else if (val == 2) {
-							subContents.table_th = [["No", "지문 내용", "현재", "향후<br>(1~3년 내)"]];
-							subContents.table_td = [
+							newSubContents.table_th = [["No", "지문 내용", "현재", "향후<br>(1~3년 내)"]];
+							newSubContents.table_td = [
 								["$index", "내용을 입력해주세요.", "R_per", "R_per"],
 								["$index", "내용을 입력해주세요.", "R_per", "R_per"],
 								["$index", "내용을 입력해주세요.", "$total", "$total"],
 							];
 						} else if (val == 3) {
-							subContents.table_th = [["지문", "교육", "서베이", "총합"]];
-							subContents.table_td = [
+							newSubContents.table_th = [["지문", "교육", "서베이", "총합"]];
+							newSubContents.table_td = [
 								["지문", "R_per", "R_per", "$totalRow"],
 								["지문", "R_per", "R_per", "$totalRow"],
 							];
 						} else if (val == 4) {
-							subContents.topAlert = ["전혀 아님", "아님", "보통", "그러함", "매우 그러함"];
-							subContents.table_th = [["No", "문항", "1", "2", "3", "4", "5"]];
-							subContents.table_td = [["$index", "문항내용을 입력해주세요.", "R_wei"]];
+							newSubContents.topAlert = ["전혀 아님", "아님", "보통", "그러함", "매우 그러함"];
+							newSubContents.table_th = [["No", "문항", "1", "2", "3", "4", "5"]];
+							newSubContents.table_td = [["$index", "문항내용을 입력해주세요.", "R_wei"]];
 						} else if (val == 5) {
-							subContents.topAlert = "weightDoubleFive";
-							subContents.table_th = [
+							newSubContents.topAlert = "weightDoubleFive";
+							newSubContents.table_th = [
 								[
 									"$rowSpan1|No",
 									"$rowSpan1|문항내용",
@@ -153,10 +167,10 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 								],
 								["-", "-", "1", "2", "3", "4", "5", "1", "2", "3", "4", "5"],
 							];
-							subContents.table_td = [["$index", "문항내용을 입력해주세요.", "R_wei", "R_wei"]];
+							newSubContents.table_td = [["$index", "문항내용을 입력해주세요.", "R_wei", "R_wei"]];
 						} else if (val == 6) {
-							subContents.table_th = [["No", "문항", "인적자원"]];
-							subContents.table_td = [
+							newSubContents.table_th = [["No", "문항", "인적자원"]];
+							newSubContents.table_td = [
 								["$index", "문항내용을 입력해주세요.", "R_people"],
 								["$index", "문항내용을 입력해주세요.", "R_year"],
 								["$index", "문항내용을 입력해주세요.", "R_won"],
@@ -165,42 +179,42 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 								["$index", "문항내용을 입력해주세요.", "R_resource"],
 							];
 						} else if (val == 7) {
-							subContents.table_th = [
+							newSubContents.table_th = [
 								["구분", "$width12|1%~5%", "$width12|6%~25%", "$width12|16%~25%", "$width12|26%~50%", "$width12|51이상"],
 							];
-							subContents.table_td = [
+							newSubContents.table_td = [
 								["증가<br>3)번 문항 이동", "R_increDecre"],
 								["감소<br>3)번 문항 이동, 해당 인원수(전담 사내강사)", "R_increDecre"],
 							];
 						} else if (val == 8) {
-							subContents.table_th = [["No", "항목", "체크"]];
-							subContents.table_td = [
+							newSubContents.table_th = [["No", "항목", "체크"]];
+							newSubContents.table_td = [
 								["$index", "항목내용을 입력해주세요.", "R_radio"],
 								["$index", "항목내용을 입력해주세요.", "R_radio"],
 							];
 						} else if (val == 9) {
-							subContents.table_th = [["No", "항목", "체크"]];
-							subContents.table_td = [
+							newSubContents.table_th = [["No", "항목", "체크"]];
+							newSubContents.table_td = [
 								["$index", "항목내용을 입력해주세요.", "R_check"],
 								["$index", "항목내용을 입력해주세요.", "R_check"],
 							];
 						} else if (val == 10) {
-							subContents.table_th = [["No", "항목", "활용여부", "효과성"]];
-							subContents.table_td = [
+							newSubContents.table_th = [["No", "항목", "활용여부", "효과성"]];
+							newSubContents.table_td = [
 								["$index", "항목내용을 입력해주세요.", "R_relCheck"],
 								["$index", "항목내용을 입력해주세요.", "R_relCheck"],
 							];
 						} else if (val == 11) {
-							subContents.table_th = [
+							newSubContents.table_th = [
 								["$rowSpan1|No", "$rowSpan1|항목", "$rowSpan1|체크", "$colSpan4|만족도", "-", "-", "-", "-"],
 								["-", "-", "-", "매우<br>낮음", "낮음", "보통", "높음", "매우<br>높음"],
 							];
-							subContents.table_td = [
+							newSubContents.table_td = [
 								["$index", "항목내용을 입력해주세요.", "R_relWeight"],
 								["$index", "항목내용을 입력해주세요.", "R_relWeight"],
 							];
 						}
-						executeChange();
+						t_changeSubcontents(newSubContents, { deleteKeys: ["topAlert", "table_set"] });
 					}}
 				>
 					<option value="1">사용자지정</option>
@@ -224,29 +238,37 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 						className="form-control"
 						value={subContents.checkType || ""}
 						onChange={(e) => {
-							if (Number(e.target.value) == 1) {
-								subContents.checkType = 1;
-								subContents.checkLimit = {
-									all: 0,
+							const selected = Number(e.target.value);
+							let newSubContents: Partial<MultiTableSubContents> = {};
+							if (selected === 1) {
+								newSubContents = {
+									checkType: 1,
+									checkLimit: {
+										all: 0,
+									},
 								};
-							} else if (Number(e.target.value) == 2) {
-								subContents.checkType = 2;
-								subContents.checkLimit = {};
+							} else if (selected === 2) {
+								newSubContents = {
+									checkType: 2,
+									checkLimit: {},
+								};
 								const newInitData = change_initData();
 								const checks = Object.keys(newInitData).filter((v) => v.startsWith(`R_${R_num}_`) && v.endsWith(`_che`));
-								checks.map((v) => {
-									if (subContents.checkLimit) subContents.checkLimit[v] = 0;
+								checks.forEach((v) => {
+									if (newSubContents.checkLimit) newSubContents.checkLimit[v] = 0;
 								});
-							} else if (Number(e.target.value) == 3) {
-								subContents.checkType = 3;
-								subContents.checkLimit = {
-									maxOrder: 1,
+							} else if (selected === 3) {
+								newSubContents = {
+									checkType: 3,
+									checkLimit: {
+										maxOrder: 1,
+									},
 								};
 							} else {
-								delete subContents.checkType;
-								delete subContents.checkLimit;
+								t_changeSubcontents({}, { deleteKeys: ["checkType", "checkLimit"] });
+								return;
 							}
-							executeChange();
+							t_changeSubcontents(newSubContents);
 						}}
 					>
 						<option value="">없음</option>
@@ -256,27 +278,21 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 					</select>
 					{subContents.checkType == 1 && subContents.checkLimit && (
 						<>
-							<input
-								type="text"
+							<MunhangText
 								className="form-control"
 								placeholder="기본값 최대"
-								value={subContents.checkLimit.all || ""}
-								onChange={(e) => {
+								value={String(subContents.checkLimit.all) || ""}
+								onChange={(value) => {
 									const check_count = subContents.table_td.reduce((count, tr) => {
 										tr.map((td) => {
 											if (td === "R_check") count++;
 										});
 										return count;
 									}, 0);
-									let targetVal = Number(e.target.value.replace(/\D/g, ""));
-									if (targetVal <= 0) {
-										targetVal = 0;
-									}
-									if (check_count < targetVal) {
-										targetVal = check_count;
-									}
-									if (subContents.checkLimit) subContents.checkLimit.all = targetVal;
-									executeChange();
+									let targetVal = Number(value.replace(/\D/g, ""));
+									if (targetVal <= 0) targetVal = 0;
+									if (check_count < targetVal) targetVal = check_count;
+									t_changeSubcontents({ checkLimit: { all: targetVal } });
 								}}
 							/>
 						</>
@@ -286,22 +302,16 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 							{Object.keys(subContents.checkLimit).map((v, i, arr) => (
 								<React.Fragment key={"checkLimit" + i}>
 									{v} :{" "}
-									<input
-										type="text"
+									<MunhangText
 										className="form-control"
 										placeholder="기본값 1"
-										value={subContents.checkLimit?.[v] || ""}
-										onChange={(e) => {
-											let targetVal = Number(e.target.value.replace(/\D/g, ""));
-											if (targetVal <= 0) {
-												targetVal = 1;
-											}
+										value={String(subContents.checkLimit?.[v]) || ""}
+										onChange={(value) => {
+											let targetVal = Number(value.replace(/\D/g, ""));
+											if (targetVal <= 0) targetVal = 1;
 											const check_count = subContents.table_td.length;
-											if (check_count < targetVal) {
-												targetVal = check_count;
-											}
-											if (subContents.checkLimit) subContents.checkLimit[v] = targetVal;
-											executeChange();
+											if (check_count < targetVal) targetVal = check_count;
+											t_changeSubcontents({ checkLimit: { [v]: targetVal } });
 										}}
 									/>
 									{i !== arr.length - 1 && ", "}
@@ -311,27 +321,21 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 					)}
 					{subContents.checkType == 3 && subContents.checkLimit && (
 						<>
-							<input
-								type="text"
+							<MunhangText
 								className="form-control"
 								placeholder="기본값 1"
-								value={subContents.checkLimit.maxOrder || ""}
-								onChange={(e) => {
-									let targetVal = Number(e.target.value.replace(/\D/g, ""));
-									if (targetVal <= 0) {
-										targetVal = 0;
-									}
+								value={String(subContents.checkLimit.maxOrder) || ""}
+								onChange={(value) => {
+									let targetVal = Number(value.replace(/\D/g, ""));
+									if (targetVal <= 0) targetVal = 0;
 									const check_count = subContents.table_td.reduce((count, tr) => {
 										tr.map((td) => {
 											if (td === "R_check") count++;
 										});
 										return count;
 									}, 0);
-									if (check_count < targetVal) {
-										targetVal = check_count;
-									}
-									if (subContents.checkLimit) subContents.checkLimit.maxOrder = targetVal;
-									executeChange();
+									if (check_count < targetVal) targetVal = check_count;
+									t_changeSubcontents({ checkLimit: { maxOrder: targetVal } });
 								}}
 							/>
 						</>
@@ -344,9 +348,8 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 								type="checkbox"
 								checked={subContents.checkCountrequired || false}
 								onChange={() => {
-									if (!subContents.checkCountrequired) subContents.checkCountrequired = true;
-									else delete subContents.checkCountrequired;
-									executeChange();
+									if (!subContents.checkCountrequired) t_changeSubcontents({ checkCountrequired: true });
+									else t_changeSubcontents({}, { deleteKeys: ["checkCountrequired"] });
 								}}
 							/>
 						</>
@@ -357,28 +360,22 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 				<div>
 					연관체크 최대 갯수 설정 :
 					<>
-						<input
-							type="text"
+						<MunhangText
 							className="form-control"
 							placeholder="기본값 1개"
-							value={subContents.relCheckLimit || ""}
-							onChange={(e) => {
+							value={String(subContents.relCheckLimit) || ""}
+							onChange={(value) => {
 								const check_count = subContents.table_td.reduce((count, tr) => {
 									tr.map((td) => {
 										if (td === "R_relCheck") count++;
 									});
 									return count;
 								}, 0);
-								let targetVal = Number(e.target.value.replace(/\D/g, ""));
-								if (targetVal <= 0) {
-									targetVal = 0;
-								}
-								if (check_count < targetVal) {
-									targetVal = check_count;
-								}
-								if (targetVal) subContents.relCheckLimit = targetVal;
-								else delete subContents.relCheckLimit;
-								executeChange();
+								let targetVal = Number(value.replace(/\D/g, ""));
+								if (targetVal <= 0) targetVal = 0;
+								if (check_count < targetVal) targetVal = check_count;
+								if (targetVal) t_changeSubcontents({ relCheckLimit: targetVal });
+								else t_changeSubcontents({}, { deleteKeys: ["relCheckLimit"] });
 							}}
 						/>
 					</>
@@ -393,14 +390,14 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 								<tr>
 									{subContents.topAlert.map((th, thIdx) => (
 										<th key={"weightTh" + thIdx}>
-											<input
-												type="text"
+											<MunhangText
 												value={th}
 												style={{ width: "100%" }}
-												onChange={(e) => {
+												onChange={(value) => {
 													if (Array.isArray(subContents.topAlert)) {
-														subContents.topAlert[thIdx] = e.target.value;
-														executeChange();
+														t_changeSubcontents({
+															topAlert: subContents.topAlert.map((v, i) => (i === thIdx ? value : v)),
+														});
 													}
 												}}
 											/>
@@ -417,23 +414,11 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 				<h4>
 					테이블제목{" "}
 					{!subContents.table_set ? (
-						<button
-							className="admin-plma green"
-							onClick={() => {
-								subContents.table_set = true;
-								executeChange();
-							}}
-						>
+						<button tabIndex={-1} className="admin-plma green" onClick={() => t_changeSubcontents({ table_set: true })}>
 							사이즈, 합치기, 디자인 설정
 						</button>
 					) : (
-						<button
-							className="admin-plma red"
-							onClick={() => {
-								subContents.table_set = undefined;
-								executeChange();
-							}}
-						>
+						<button tabIndex={-1} className="admin-plma red" onClick={() => t_changeSubcontents({ table_set: false })}>
 							사이즈, 합치기, 디자인 설정 숨기기
 						</button>
 					)}
@@ -453,7 +438,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 												let colSpan = 0;
 												let width = 0;
 
-												const newTableTh = [...subContents.table_th] as MultiTableThCell[][];
+												const newTableTh = (subContents.table_th as MultiTableThCell[][]).map((row) => [...row]);
 
 												// th 첫 문자열(속성적용용)
 												const frontStr = (rs?: number, cs?: number, wid?: number) => {
@@ -551,8 +536,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																	value={th === "R_etc" ? th : ""}
 																	onChange={(e) => {
 																		newTableTh[trIdx][thIdx] = e.target.value;
-																		subContents.table_th = newTableTh;
-																		executeChange();
+																		t_changeSubcontents({ table_th: newTableTh });
 																	}}
 																>
 																	<option value="">텍스트</option>
@@ -564,17 +548,14 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 															</div>
 															{th !== "-" && th !== "R_etc" && (
 																<div>
-																	<textarea
-																		tabIndex={0}
-																		value={th.replace(/<br>/g, "\n")}
-																		rows={(th?.match(/<br>/g)?.length || 0) + 1 || 1}
-																		onChange={(e) => {
-																			if (e.target.value === "-") return;
-																			let val = e.target.value.replace(/\n/g, "<br>");
-																			if (e.target.value === "기타") val = "R_etc";
-																			newTableTh[trIdx][thIdx] = frontStr() + val;
-																			subContents.table_th = newTableTh;
-																			executeChange();
+																	<MunhangTextarea
+																		className="test"
+																		value={th}
+																		onChange={(value) => {
+																			if (value === "-") return;
+																			if (value === "기타") value = "R_etc";
+																			newTableTh[trIdx][thIdx] = frontStr() + value;
+																			t_changeSubcontents({ table_th: newTableTh });
 																		}}
 																	/>
 																</div>
@@ -590,8 +571,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																			if (num > 0)
 																				newTableTh[trIdx][thIdx] = frontStr(undefined, undefined, num) + th;
 																			else newTableTh[trIdx][thIdx] = frontStr(undefined, undefined, 0) + th;
-																			subContents.table_th = newTableTh;
-																			executeChange();
+																			t_changeSubcontents({ table_th: newTableTh });
 																		}}
 																	/>
 																	%{/* 열 추가삭제 */}
@@ -614,8 +594,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																			// 자기 자신 바꾸기
 																			if (num > 0) newTableTh[trIdx][thIdx] = frontStr(num) + th;
 																			else newTableTh[trIdx][thIdx] = frontStr(0) + th;
-																			subContents.table_th = newTableTh;
-																			executeChange();
+																			t_changeSubcontents({ table_th: newTableTh });
 																		}}
 																	/>
 																	<br />
@@ -637,8 +616,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																			// 자기 자신 바꾸기
 																			if (num > 0) newTableTh[trIdx][thIdx] = frontStr(undefined, num) + th;
 																			else newTableTh[trIdx][thIdx] = frontStr(undefined, 0) + th;
-																			subContents.table_th = newTableTh;
-																			executeChange();
+																			t_changeSubcontents({ table_th: newTableTh });
 																		}}
 																	/>
 																</>
@@ -655,10 +633,10 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 														>
 															<div style={{ position: "absolute", right: "5px", top: "0" }}>
 																<button
-																	tabIndex={1}
+																	tabIndex={-1}
 																	className="admin-plma"
 																	onClick={() => {
-																		const list = subContents.table_th.slice(0) as string[][];
+																		const list = newTableTh.slice(0) as string[][];
 																		for (let i = 0; i < list.length; i++) {
 																			if (!list[i]) list.push([""]);
 																			for (let j = 0; j < thIdx + 2; j++) {
@@ -667,8 +645,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																				}
 																			}
 																		}
-																		subContents.table_th = list;
-																		executeChange();
+																		t_changeSubcontents({ table_th: list });
 																	}}
 																>
 																	열+
@@ -676,14 +653,13 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																{thArr.length >= 2 && (
 																	<>
 																		<button
-																			tabIndex={1}
+																			tabIndex={-1}
 																			className="admin-plma red"
 																			onClick={() => {
 																				let result = true;
 																				// 테이블 제목
-																				const list = [...subContents.table_th] as string[][];
-																				for (let i = 0; i < list.length; i++) {
-																					if (list[i][list[i].length - 1] === "-") {
+																				for (let i = 0; i < newTableTh.length; i++) {
+																					if (newTableTh[i][newTableTh[i].length - 1] === "-") {
 																						result = false;
 																						break;
 																					}
@@ -695,9 +671,8 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																					});
 																					return;
 																				}
-																				list.map((v) => v.pop());
-																				subContents.table_th = list;
-																				executeChange();
+																				newTableTh.map((v) => v.pop());
+																				t_changeSubcontents({ table_th: newTableTh });
 																			}}
 																		>
 																			열-
@@ -723,20 +698,20 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 								colSpan={subContents?.table_th && subContents?.table_th[0].length}
 							>
 								<button
-									tabIndex={1}
+									tabIndex={-1}
 									className="admin-plma"
 									onClick={() => {
 										const list = [...subContents.table_th] as string[][];
-										list.push(new Array(list[0].length).fill(""));
-										subContents.table_th = list;
-										executeChange();
+										t_changeSubcontents({
+											table_th: [...list, new Array(list[0].length).fill("")],
+										});
 									}}
 								>
 									행+
 								</button>{" "}
 								{subContents.table_th?.length >= 2 && (
 									<button
-										tabIndex={1}
+										tabIndex={-1}
 										className="admin-plma red"
 										onClick={() => {
 											const list = subContents.table_th.slice(0) as string[][];
@@ -745,8 +720,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 												return;
 											}
 											list.pop();
-											subContents.table_th = list;
-											executeChange();
+											t_changeSubcontents({ table_th: list });
 										}}
 									>
 										행-
@@ -775,6 +749,8 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 										let colSpan = 0;
 										let design = 0;
 
+										const newTableTd = (subContents.table_td as MultiTableTdCell[][]).map((row) => [...row]);
+
 										// td 첫 문자열(속성적용용)
 										const frontStr = (rs?: number, cs?: number) => {
 											const rowSpanV = rs == 0 ? 0 : rs || rowSpan;
@@ -792,20 +768,14 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 												for (let j = tdIndex; j <= tdIndex + colSpanV; j++) {
 													if (i == trIndex && j == tdIndex) continue;
 													if (
-														subContents.table_td[i] == undefined ||
-														subContents.table_td[i][j] == undefined ||
-														subContents.table_td[i][j].startsWith("$rowSpan") ||
-														subContents.table_td[i][j].startsWith("$colSpan")
+														newTableTd[i] == undefined ||
+														newTableTd[i][j] == undefined ||
+														newTableTd[i][j].startsWith("$rowSpan") ||
+														newTableTd[i][j].startsWith("$colSpan")
 													) {
 														result = false;
 														break;
 													}
-													// let splitList = subContents.table_td[i][j].split("|");
-													// let cont = splitList[splitList.length - 1];
-													// if (cont !== "$index" && (cont.startsWith("$") || cont.startsWith("R_"))) {
-													//   result = false;
-													//   break;
-													// }
 												}
 												if (!result) break;
 											}
@@ -818,7 +788,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 											for (let i = trIndex; i <= trIndex + rowSpanV; i++) {
 												for (let j = tdIndex; j <= tdIndex + colSpanV; j++) {
 													if (i == trIndex && j == tdIndex) continue;
-													subContents.table_td[i][j] = "-";
+													newTableTd[i][j] = "-";
 												}
 											}
 										};
@@ -830,9 +800,9 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 												for (let j = tdIndex; j <= tdIndex + colSpanV; j++) {
 													if (i == trIdx && j == tdIdx) continue;
 													if (rs != undefined) {
-														if (i > trIndex + rs) subContents.table_td[i][j] = "";
+														if (i > trIndex + rs) newTableTd[i][j] = "";
 													} else if (cs != undefined) {
-														if (j > tdIndex + cs) subContents.table_td[i][j] = "";
+														if (j > tdIndex + cs) newTableTd[i][j] = "";
 													}
 												}
 											}
@@ -889,59 +859,58 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 															}
 															onChange={(e) => {
 																const value = e.target.value;
-																const tdList = subContents.table_td;
-																const trLeng = tdList.length;
+																const trLeng = newTableTd.length;
 
-																if (tdList.some((v) => v.some((v2) => v2 === "$totalRow"))) {
-																	tdList.map((v, i) => {
+																if (newTableTd.some((v) => v.some((v2) => v2 === "$totalRow"))) {
+																	newTableTd.map((v, i) => {
 																		v.map((_, i2) => {
-																			tdList[i][i2] = "";
+																			newTableTd[i][i2] = "";
 																		});
 																	});
 																}
 																if (value === "$totalRow") {
-																	tdList.map((v, i) => {
+																	newTableTd.map((v, i) => {
 																		v.map((_, i2, arr2) => {
 																			if (i2 === 0) {
-																				tdList[i][i2] = "비율";
+																				newTableTd[i][i2] = "비율";
 																			} else if (i2 === arr2.length - 1) {
-																				tdList[i][i2] = "$totalRow";
+																				newTableTd[i][i2] = "$totalRow";
 																			} else {
-																				tdList[i][i2] = "R_per";
+																				newTableTd[i][i2] = "R_per";
 																			}
 																		});
 																	});
-																} else if (tdList.some((v) => v.some((v2) => v2 === "$total"))) {
-																	tdList[trIdx][tdIdx] = value;
+																} else if (newTableTd.some((v) => v.some((v2) => v2 === "$total"))) {
+																	newTableTd[trIdx][tdIdx] = value;
 																} else {
 																	let index = 0;
-																	while (tdList[index] && tdList[index][tdIdx] != undefined) {
+																	while (newTableTd[index] && newTableTd[index][tdIdx] != undefined) {
 																		if (value === "$total") {
 																			if (index == trLeng - 1) {
-																				tdList[index][tdIdx] = value;
+																				newTableTd[index][tdIdx] = value;
 																			} else {
-																				tdList[index][tdIdx] = "R_per";
+																				newTableTd[index][tdIdx] = "R_per";
 																			}
 																		} else if (
 																			value !== "R_etc" &&
 																			(value.startsWith("R_") || value.startsWith("$"))
 																		) {
-																			tdList[index][tdIdx] = value;
+																			newTableTd[index][tdIdx] = value;
 																		} else {
 																			if (trIdx == index) {
-																				tdList[index][tdIdx] = value;
+																				newTableTd[index][tdIdx] = value;
 																			} else if (
-																				tdList[index][tdIdx] !== "R_etc" &&
-																				(tdList[index][tdIdx].startsWith("R_") ||
-																					tdList[index][tdIdx].startsWith("$"))
+																				newTableTd[index][tdIdx] !== "R_etc" &&
+																				(newTableTd[index][tdIdx].startsWith("R_") ||
+																					newTableTd[index][tdIdx].startsWith("$"))
 																			) {
-																				tdList[index][tdIdx] = "";
+																				newTableTd[index][tdIdx] = "";
 																			}
 																		}
 																		index++;
 																	}
 																}
-																executeChange();
+																t_changeSubcontents({ table_td: newTableTd });
 															}}
 														>
 															<option value="">텍스트</option>
@@ -969,8 +938,8 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																	id=""
 																	value={td}
 																	onChange={(e) => {
-																		subContents.table_td[trIdx][tdIdx] = e.target.value;
-																		executeChange();
+																		newTableTd[trIdx][tdIdx] = e.target.value;
+																		t_changeSubcontents({ table_td: newTableTd });
 																	}}
 																>
 																	<option value="R_resource">-선택-</option>
@@ -987,6 +956,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																<>
 																	{" "}
 																	<button
+																		tabIndex={-1}
 																		className="btn btn-primary"
 																		onClick={() => {
 																			set_modalOn(true);
@@ -1001,18 +971,15 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 													{td !== "-" && !td.startsWith("R_") && !td.startsWith("$") && (
 														<div>
 															{" "}
-															<textarea
-																tabIndex={0}
-																value={td.replace(/<br>/g, "\n")}
-																rows={(td?.match(/<br>/g)?.length || 0) + 1 || 1}
-																onChange={(e) => {
-																	if (e.target.value === "-") return;
-																	if (e.target.value === "$") return;
-																	if (e.target.value === "R_") return;
-																	let val = e.target.value.replace(/\n/g, "<br>");
-																	if (e.target.value === "기타") val = "R_etc";
-																	subContents.table_td[trIdx][tdIdx] = frontStr() + val;
-																	executeChange();
+															<MunhangTextarea
+																value={td}
+																onChange={(value) => {
+																	if (value === "-") return;
+																	if (value === "$") return;
+																	if (value === "R_") return;
+																	if (value === "기타") value = "R_etc";
+																	newTableTd[trIdx][tdIdx] = frontStr() + value;
+																	t_changeSubcontents({ table_td: newTableTd });
 																}}
 															/>
 														</div>
@@ -1022,12 +989,13 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 															{!td.startsWith("R_") && !td.startsWith("$") && (
 																<>
 																	<button
+																		tabIndex={-1}
 																		className="admin-plma"
 																		onClick={() => {
 																			if (design < 3) design++;
 																			else design = 0;
-																			subContents.table_td[trIdx][tdIdx] = frontStr() + td;
-																			executeChange();
+																			newTableTd[trIdx][tdIdx] = frontStr() + td;
+																			t_changeSubcontents({ table_td: newTableTd });
 																		}}
 																	>
 																		design{design ? design : ""}
@@ -1053,9 +1021,9 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																			if (num > rowSpan) combine(num, undefined, trIdx, tdIdx);
 																			else combineCancel(num, undefined, trIdx, tdIdx);
 																			// 자기 자신 바꾸기
-																			if (num > 0) subContents.table_td[trIdx][tdIdx] = frontStr(num) + td;
-																			else subContents.table_td[trIdx][tdIdx] = frontStr(0) + td;
-																			executeChange();
+																			if (num > 0) newTableTd[trIdx][tdIdx] = frontStr(num) + td;
+																			else newTableTd[trIdx][tdIdx] = frontStr(0) + td;
+																			t_changeSubcontents({ table_td: newTableTd });
 																		}}
 																	/>
 																	<br />
@@ -1075,10 +1043,9 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																			if (num > colSpan) combine(undefined, num, trIdx, tdIdx);
 																			else combineCancel(undefined, num, trIdx, tdIdx);
 																			// 자기 자신 바꾸기
-																			if (num > 0)
-																				subContents.table_td[trIdx][tdIdx] = frontStr(undefined, num) + td;
-																			else subContents.table_td[trIdx][tdIdx] = frontStr(undefined, 0) + td;
-																			executeChange();
+																			if (num > 0) newTableTd[trIdx][tdIdx] = frontStr(undefined, num) + td;
+																			else newTableTd[trIdx][tdIdx] = frontStr(undefined, 0) + td;
+																			t_changeSubcontents({ table_td: newTableTd });
 																		}}
 																	/>
 																</>
@@ -1098,9 +1065,9 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 													<div style={{ position: "absolute", right: "5px", top: "0" }}>
 														<button
 															className="admin-plma"
-															tabIndex={1}
+															tabIndex={-1}
 															onClick={() => {
-																const list2 = subContents.table_td.slice(0);
+																const list2 = newTableTd.slice(0);
 																for (let i = 0; i < list2.length; i++) {
 																	if (!list2[i]) list2.push([""]);
 																	for (let j = 0; j < tdIdx + 2; j++) {
@@ -1119,7 +1086,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																	});
 																}
 																subContents.table_td = list2;
-																executeChange();
+																t_changeSubcontents({ table_td: list2 });
 															}}
 														>
 															열+
@@ -1127,14 +1094,13 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 														{tdArr.length >= 2 && (
 															<>
 																<button
-																	tabIndex={1}
+																	tabIndex={-1}
 																	className="admin-plma red"
 																	onClick={() => {
 																		let result = true;
 																		// 테이블 내용
-																		const list2 = [...subContents.table_td];
-																		for (let i = 0; i < list2.length; i++) {
-																			if (list2[i][list2[i].length - 1] === "-") {
+																		for (let i = 0; i < newTableTd.length; i++) {
+																			if (newTableTd[i][newTableTd[i].length - 1] === "-") {
 																				result = false;
 																				break;
 																			}
@@ -1147,25 +1113,24 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 																			return;
 																		}
 																		// 비율가로합 처리
-																		if (list2.some((v) => v.some((v2) => v2 === "$totalRow"))) {
-																			if (list2[0].length > 3) {
-																				list2.map((v) => {
+																		if (newTableTd.some((v) => v.some((v2) => v2 === "$totalRow"))) {
+																			if (newTableTd[0].length > 3) {
+																				newTableTd.map((v) => {
 																					v.pop();
 																					v[v.length - 1] = "$totalRow";
 																				});
 																			} else {
-																				list2.map((v, i) => {
+																				newTableTd.map((v, i) => {
 																					v.pop();
 																					v.map((_, i2) => {
-																						list2[i][i2] = "";
+																						newTableTd[i][i2] = "";
 																					});
 																				});
 																			}
 																		} else {
-																			list2.map((v) => v.pop());
+																			newTableTd.map((v) => v.pop());
 																		}
-																		subContents.table_td = list2;
-																		executeChange();
+																		t_changeSubcontents({ table_td: newTableTd });
 																	}}
 																>
 																	열-
@@ -1194,13 +1159,13 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 								colSpan={subContents?.table_td && subContents?.table_td[0].length}
 							>
 								<button
-									tabIndex={1}
+									tabIndex={-1}
 									className="admin-plma"
 									onClick={() => {
-										const list = [...subContents.table_td];
-										const inList = list[list.length - 1].map((v, i) => {
+										const newTableTd = (subContents.table_td as MultiTableTdCell[][]).map((row) => [...row]);
+										const inList = newTableTd[newTableTd.length - 1].map((v, i) => {
 											if (v === "$total") {
-												list[list.length - 1][i] = "R_per";
+												newTableTd[newTableTd.length - 1][i] = "R_per";
 												return "$total";
 											} else if (v !== "R_etc" && (v.startsWith("R_") || v.startsWith("$"))) {
 												return v;
@@ -1208,16 +1173,15 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 												return "";
 											}
 										});
-										list.push(inList);
-										subContents.table_td = list;
-										executeChange();
+										newTableTd.push(inList);
+										t_changeSubcontents({ table_td: newTableTd });
 									}}
 								>
 									행+
 								</button>{" "}
 								{subContents.table_td?.length >= 2 && (
 									<button
-										tabIndex={1}
+										tabIndex={-1}
 										className="admin-plma red"
 										onClick={() => {
 											const list = subContents.table_td.slice(0);
@@ -1241,8 +1205,7 @@ export default function AdminMultiTable({ subContents, R_num, changeSubcontents,
 											}
 											// 비율 세로합 전용 END
 											list.pop();
-											subContents.table_td = list;
-											executeChange();
+											t_changeSubcontents({ table_td: list });
 										}}
 									>
 										행-

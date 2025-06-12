@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import jspreadsheet, { WorksheetInstance } from "jspreadsheet-ce";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import { uiModal } from "../../lib/modal";
@@ -13,7 +13,7 @@ export default function ModalJimoon({
 	input_jimoon: (excelData: string[][]) => void;
 }) {
 	const modalEle = useRef(null);
-	const [excel, set_excel] = useState<WorksheetInstance | null>(null);
+	const excel = useRef<WorksheetInstance | null>(null);
 	const spreadsheetRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -29,17 +29,17 @@ export default function ModalJimoon({
 						},
 					],
 				});
-				set_excel(jex[0]);
+				excel.current = jex[0];
 			}
 		} else {
 			uiModal.close(modalEle.current);
 			setTimeout(() => {
-				if (excel) {
-					excel.deleteWorksheet(0);
+				if (excel.current) {
+					excel.current.deleteWorksheet(0);
 				}
 			}, 500);
 		}
-	}, [modalOn, excel]);
+	}, [modalOn]);
 	return (
 		<>
 			<div className="modal-wrap" ref={modalEle}>
@@ -60,8 +60,8 @@ export default function ModalJimoon({
 								<button
 									className="btn btn-primary"
 									onClick={() => {
-										if (!excel) return;
-										const excelData = excel.getData() as string[][];
+										if (!excel.current) return;
+										const excelData = excel.current.getData() as string[][];
 										if (excelData.length === 1 && excelData[0].length === 1 && !excelData[0][0]) {
 											alert("값을 입력해주세요.");
 										} else if (excelData.filter((v) => v[0] === "기타").length > 1) {
