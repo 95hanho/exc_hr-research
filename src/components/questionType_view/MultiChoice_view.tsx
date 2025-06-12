@@ -1,12 +1,12 @@
-import { MultiChoiceQuestion } from "../../types/survey";
+import { MultiChoiceSubContents } from "../../types/question";
 
 interface MultiChoiceProps {
 	R_num: number;
-	subContents: MultiChoiceQuestion["subContents"];
+	subContents: MultiChoiceSubContents;
 }
 
 interface ChoiceGroupProps extends MultiChoiceProps {
-	choices: MultiChoiceQuestion["subContents"]["choices"];
+	choices: MultiChoiceSubContents["choices"];
 	halfIndex: number;
 }
 

@@ -3,12 +3,12 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { surveyQuestionTestFail, surveyQuestionTestSuccess, useSurveyQuestionTest } from "../hooks/survey/useSurveyQuestionTest.js";
-import { EtcTextareaQuestion, EtcTextQuestion, MultiChoiceQuestion, MultiTableQuestion, Munhang } from "../types/survey.js";
 import MultiTable_view from "../components/questionType_view/MultiTable_view.js";
 import MultiChoice_view from "../components/questionType_view/MultiChoice_view.js";
 import EtcText_view from "../components/questionType_view/EtcText_view.js";
 import EtcTextarea_view from "../components/questionType_view/EtcTextarea_view.js";
 import SurveyQuestionPageFooter from "../components/survey/SurveyQuestionPageFooter.js";
+import { EtcTextareaSubContents, EtcTextSubContents, MultiChoiceSubContents, MultiTableSubContents, Munhang } from "../types/question.js";
 
 export default function SurveyQuestionPage_view() {
 	const { surveyType, surveyPage } = useParams() as { surveyType: string; surveyPage: string };
@@ -102,7 +102,7 @@ export default function SurveyQuestionPage_view() {
 														{munhang.mainAlert && (
 															<div
 																className={"alert bg-" + munhang.mainAlert.color}
-																dangerouslySetInnerHTML={{ __html: munhang.mainAlert.content }}
+																dangerouslySetInnerHTML={{ __html: String(munhang.mainAlert.content) }}
 															></div>
 														)}
 														{munhang.questions.map((question, qIdx) => {
@@ -122,25 +122,25 @@ export default function SurveyQuestionPage_view() {
 																		></div>
 																		{question.qType === "MultiTable" && (
 																			<MultiTable_view
-																				subContents={(question as MultiTableQuestion).subContents}
+																				subContents={question.subContents as MultiTableSubContents}
 																				{...commonProps}
 																			/>
 																		)}
 																		{question.qType === "MultiChoice" && (
 																			<MultiChoice_view
-																				subContents={(question as MultiChoiceQuestion).subContents}
+																				subContents={question.subContents as MultiChoiceSubContents}
 																				{...commonProps}
 																			/>
 																		)}
 																		{question.qType === "EtcText" && (
 																			<EtcText_view
-																				subContents={(question as EtcTextQuestion).subContents}
+																				subContents={question.subContents as EtcTextSubContents}
 																				{...commonProps}
 																			/>
 																		)}
 																		{question.qType === "EtcTextarea" && (
 																			<EtcTextarea_view
-																				subContents={(question as EtcTextareaQuestion).subContents}
+																				subContents={question.subContents as EtcTextareaSubContents}
 																				{...commonProps}
 																			/>
 																		)}

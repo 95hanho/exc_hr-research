@@ -1,9 +1,9 @@
 import React from "react";
-import { MultiTableQuestion, MultiTableThCell } from "../../types/survey";
+import { MultiTableSubContents, MultiTableThCell } from "../../types/question";
 
 interface MultiTableProps {
 	R_num: number;
-	subContents: MultiTableQuestion["subContents"];
+	subContents: MultiTableSubContents;
 }
 
 /*

@@ -1,7 +1,8 @@
 import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";
-import { Munhang, RequiredHideRule, ResultData } from "../../types/survey";
+import { RequiredHideRule, ResultData } from "../../types/survey";
+import { Munhang } from "../../types/question";
 
 type AdminSetSurveyQuestionParam = {
 	surveyType: string;

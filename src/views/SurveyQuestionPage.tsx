@@ -1,30 +1,18 @@
 /* 설문 문항 페이지 */
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import MultiTable from "../components/questionType/MultiTable.js";
-import MultiChoice from "../components/questionType/MultiChoice.js";
-import EtcText from "../components/questionType/EtcText.js";
-import EtcTextarea from "../components/questionType/EtcTextarea.js";
 import { Cookies } from "react-cookie";
 import { useAppDispatch } from "../hooks/useRedux.js";
 import { getSurveyToken, target_scrFocus } from "../lib/ui.js";
 import { useSurveyStore } from "../hooks/survey/useSurveyStore.js";
 import { surveyQuestionFail, surveyQuestionSuccess, useSurveyQuestion } from "../hooks/survey/useSurveyQuestion.js";
-import {
-	EtcTextareaQuestion,
-	EtcTextQuestion,
-	MultiChoiceQuestion,
-	MultiTableQuestion,
-	// MultiTableTdKeyword,
-	Munhang,
-	MunhangVisibilityRule,
-	ResultData,
-	SurveyQuestionProps,
-	SurveyStoreData,
-} from "../types/survey.js";
+import { MunhangVisibilityRule, ResultData, SurveyStoreData } from "../types/survey.js";
 import useSurveyCustom from "../hooks/surveyCustom/useSurveyCustom.js";
 import SurveyQuestionPageFooter from "../components/survey/SurveyQuestionPageFooter.js";
 import AllLoding from "../components/AllLoding.js";
+import { MultiTableSubContents, Munhang } from "../types/question.js";
+import MunhangTopMenu from "../components/survey/MunhangTopMenu.js";
+import SurveyMunhangs from "../components/survey/SurveyMunhangs.js";
 
 export default function SurveyQuestionPage() {
 	const location = useLocation();
@@ -121,7 +109,7 @@ export default function SurveyQuestionPage() {
 						continue;
 					}
 					if (question.qType === "MultiTable") {
-						const checkTd: MultiTableQuestion["subContents"]["table_td"] = question.subContents.table_td;
+						const checkTd: MultiTableSubContents["table_td"] = question.subContents.table_td;
 						checkAttr = checkAttr.filter((v) => !v.endsWith("_etc"));
 						const per_obj: Record<string, number> = {};
 						for (const attr of checkAttr) {
@@ -322,7 +310,7 @@ export default function SurveyQuestionPage() {
 							}
 							// R_check에서 순서체크에서 사용
 							function cheOrder_resultCheck() {
-								const subCont = question.subContents as MultiTableQuestion["subContents"];
+								const subCont = question.subContents as MultiTableSubContents;
 								const maxOrder = subCont.checkLimit?.maxOrder || 1;
 								const checkCount = resultData[attr] ? String(resultData[attr]).split(",").length : 0;
 								if (maxOrder > checkCount) {
@@ -373,13 +361,6 @@ export default function SurveyQuestionPage() {
 				}
 				if (!result) break;
 			}
-			// 빈문자열인거 null처리
-			// for (const key in resultObj) {
-			// 	if (resultObj[key] === "") {
-			// 		console.log(123);
-			// 		resultObj[key] = "";
-			// 	}
-			// }
 			if (!result) {
 				return { status: false, obj: resultObj };
 			} else {
@@ -518,7 +499,6 @@ export default function SurveyQuestionPage() {
 			set_munhangs(newMunhangs);
 			return result;
 		},
-		// [customHide, hideRNumList, munhangs, resultData]
 		[customHide]
 	);
 
@@ -577,8 +557,6 @@ export default function SurveyQuestionPage() {
 					setTimeout(() => {
 						custom_changeResultData(newResultData, undefined, true);
 					}, 1000);
-					// setMunhangsVisibilityByAnswer([...surveyData.munhangs]);
-					// set_munhangs([...surveyData.munhangs]);
 				}
 			} else if (surveyQuestion.msg) {
 				dispatch({ type: "modal/on_modal_alert", payload: surveyQuestion.msg });
@@ -622,19 +600,6 @@ export default function SurveyQuestionPage() {
 		else set_allLoding(false);
 	}, [isFetching]);
 
-	// useEffect(() => {
-	// 	console.log("refetch");
-	// 	refetch(); // 페이지 바뀌면 무조건 요청
-	// }, [location.pathname, refetch]);
-
-	useEffect(() => {
-		// console.log("Effect 실행됨", {
-		// 	isSuccess,
-		// 	surveyQuestion,
-		// 	surveyToken,
-		// });
-	}, [isSuccess, surveyQuestion, surveyToken]);
-
 	const testEnd = () => {
 		cookies.remove("marking", { path: "/" });
 		set_testView(false);
@@ -669,60 +634,18 @@ export default function SurveyQuestionPage() {
 					<img src={`https://research.exc.co.kr/RAC/${sYear}_img/${urlType}_maintop.png?v=${new Date().getTime()}`} alt="" />
 				</div>
 				<p className="email-mark">설문 이메일 : {location.state?.email}</p>
-				<header className="top_menu">
-					{top_menuList.map((cont, index) => (
-						<a
-							href="#"
-							key={"top_menu" + index}
-							className={surveyPageNum == index + 1 ? "-active" : ""}
-							onClick={(e) => {
-								e.preventDefault();
-								if (testView)
-									navigate(`/survey/${surveyType}/${index + 1}`, {
-										state: {
-											email: location.state?.email,
-										},
-									});
-								else if (!clickPrevent) {
-									set_clickPrevent(true);
-									setTimeout(() => {
-										set_clickPrevent(false);
-									}, 2000);
-									if (surveyPageNum > index + 1) {
-										dataSave();
-										navigate(`/survey/${surveyType}/${index + 1}`, {
-											state: {
-												email: location.state?.email,
-											},
-										});
-									} else {
-										if (surveyPageNum != index + 1) {
-											submit_resultData().then((result) => {
-												if (result) {
-													if (progress_raw.slice(0, index).every((v) => v)) {
-														navigate(`/survey/${surveyType}/${index + 1}`, {
-															state: {
-																email: location.state?.email,
-															},
-														});
-													} else
-														dispatch({
-															type: "modal/on_modal_alert",
-															payload: "설문을 순서대로 진행해주세요.",
-														});
-												}
-											});
-										}
-									}
-								} else {
-									dispatch({ type: "modal/on_modal_alert", payload: "잠시만 기다려주세요." });
-								}
-							}}
-						>
-							{cont}
-						</a>
-					))}
-				</header>
+				<MunhangTopMenu
+					top_menuList={top_menuList}
+					surveyPageNum={surveyPageNum}
+					surveyType={surveyType}
+					testView={testView}
+					email={location.state?.email}
+					clickPrevent={clickPrevent}
+					set_clickPrevent={set_clickPrevent}
+					dataSave={dataSave}
+					submit_resultData={submit_resultData}
+					progress_raw={progress_raw}
+				/>
 				{allLoding ? (
 					<AllLoding />
 				) : (
@@ -737,132 +660,7 @@ export default function SurveyQuestionPage() {
 							<header className="page_header">
 								<b>{top_menuList[surveyPageNum - 1]}</b>
 							</header>
-							<>
-								<div className="page_body">
-									{munhangs.length > 0 &&
-										(() => {
-											return munhangs.map((munhang, mIdx) => {
-												// let mainHide = false;
-												// if (munhang.required) {
-												// 	const questionLength = munhang.questions.length;
-												// 	for (let i = R_num + 1; i <= R_num + questionLength; i++) {
-												// 		const rObjList = requiredObj[R_num];
-												// 		for (const rObj of rObjList) {
-												// 			if (resultData[rObj.attr] && rObj.values.some((v) => v === resultData[rObj.attr])) {
-												// 				break;
-												// 			}
-												// 		}
-												// 	}
-												// 	if (questionLength === 0) {
-												// 		mainHide = true;
-												// 	}
-												// }
-
-												return (
-													<section key={"munhang" + mIdx} className={`flex munhang${munhang.mainHide ? " hide" : ""}`}>
-														<div className="tit-col">
-															<h3
-																dangerouslySetInnerHTML={{
-																	__html: `${mIdx + 1}. ${munhang.title}`,
-																}}
-															/>
-														</div>
-														<div className="desc-col">
-															{munhang.mainTitle && (
-																<div className="ask_t1" dangerouslySetInnerHTML={{ __html: munhang.mainTitle }}></div>
-															)}
-															{munhang.mainAlert && (
-																<div
-																	className={"alert bg-" + munhang.mainAlert.color}
-																	dangerouslySetInnerHTML={{ __html: munhang.mainAlert.content }}
-																></div>
-															)}
-															{munhang.questions.map((question, qIdx) => {
-																const R_num = question.R_num as number;
-																const commonProps: SurveyQuestionProps = {
-																	resultData,
-																	changeResultData,
-																	R_num,
-																};
-																// let hide = false;
-																// if (requiredObj[R_num]) {
-																// 	const rObjList = requiredObj[R_num];
-																// 	for (const rObj of rObjList) {
-																// 		if (
-																// 			resultData[rObj.attr] &&
-																// 			rObj.values.some((v) => {
-																// 				if (String(resultData[rObj.attr]).includes(",")) {
-																// 					return String(resultData[rObj.attr]).split(",").includes(v);
-																// 				} else {
-																// 					return v === resultData[rObj.attr];
-																// 				}
-																// 			})
-																// 		) {
-																// 			hide = true;
-																// 			break;
-																// 		}
-																// 	}
-																// }
-																// if (customHide(R_num)) {
-																// 	hide = true;
-																// }
-																return (
-																	<div
-																		key={"question" + qIdx}
-																		id={`R_${R_num}`}
-																		className={`question${question.hide || munhang.mainHide ? " hide" : ""}`}
-																	>
-																		{testView && <h1>question {R_num} 번</h1>}
-																		<div className={`${question.subPadding ? "ask_wr" : "mt"}`}>
-																			<div
-																				className="ask_t1"
-																				dangerouslySetInnerHTML={{
-																					__html: question.title,
-																				}}
-																			></div>
-																			{question.qType === "MultiTable" && (
-																				<MultiTable
-																					subContents={(question as MultiTableQuestion).subContents}
-																					{...commonProps}
-																				/>
-																			)}
-																			{question.qType === "MultiChoice" && (
-																				<MultiChoice
-																					subContents={(question as MultiChoiceQuestion).subContents}
-																					{...commonProps}
-																				/>
-																			)}
-																			{question.qType === "EtcText" && (
-																				<EtcText
-																					subContents={(question as EtcTextQuestion).subContents}
-																					{...commonProps}
-																				/>
-																			)}
-																			{question.qType === "EtcTextarea" && (
-																				<EtcTextarea
-																					subContents={(question as EtcTextareaQuestion).subContents}
-																					{...commonProps}
-																				/>
-																			)}
-																		</div>
-																		{question.alert && (
-																			<div
-																				className={`alert bg-${question.alert.color}`}
-																				dangerouslySetInnerHTML={{
-																					__html: question.alert.content,
-																				}}
-																			/>
-																		)}
-																	</div>
-																);
-															})}
-														</div>
-													</section>
-												);
-											});
-										})()}
-								</div>
-							</>
+							<SurveyMunhangs munhangs={munhangs} resultData={resultData} changeResultData={changeResultData} testView={testView} />
 						</div>
 					</form>
 				)}

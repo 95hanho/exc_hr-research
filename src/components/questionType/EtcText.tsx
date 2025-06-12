@@ -1,7 +1,8 @@
-import { EtcTextQuestion, SurveyQuestionProps } from "../../types/survey";
+import { EtcTextSubContents } from "../../types/question";
+import { SurveyQuestionProps } from "../../types/survey";
 
 interface EtcTextProps extends SurveyQuestionProps {
-	subContents?: EtcTextQuestion["subContents"];
+	subContents?: EtcTextSubContents;
 }
 
 export default function EtcText({ subContents, resultData, changeResultData, R_num }: EtcTextProps) {

@@ -1,7 +1,6 @@
 /* 관리자 수주직원용 결과 */
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-// import { serviceGetSurvey, serviceUpdateRecommend } from "../compositions/service";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import refresh from "/template/images/refresh.png";

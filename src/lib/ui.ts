@@ -21,7 +21,7 @@ export const getSurveyToken = (surveyType: string): string => {
 export const removeSurveyToken = (surveyType: string) => {
 	cookies.remove(surveyType, { path: "/" });
 };
-//
+// 해당 요소로 바로 이동
 export const target_scrFocus_instant = (id: string) => {
 	const target = document.getElementById(id);
 	const scrEle = window;
@@ -30,16 +30,7 @@ export const target_scrFocus_instant = (id: string) => {
 		behavior: "instant", // 부드러운 스크롤
 	});
 };
-// 아이디 기반 포커스 또는 스크롤 - ref 딕셔너리 처리로 바꿔봄...
-// export const info_target_scrFocus = (id: string) => {
-// 	const target = document.getElementById(id);
-// 	if (!target) return;
-// 	if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-// 		target.focus();
-// 	} else {
-// 		target.scrollIntoView({ behavior: "smooth", block: "center" });
-// 	}
-// };
+// 포커스 또는 스크롤 - ref요소가 input이면 포커스, 아니면 이동
 export const info_target_scrFocus = (element: HTMLElement | null) => {
 	if (!element) return;
 
@@ -49,6 +40,7 @@ export const info_target_scrFocus = (element: HTMLElement | null) => {
 		element.scrollIntoView({ behavior: "smooth", block: "center" });
 	}
 };
+// 포커스 또는 스크롤 - 변화되는 문항데이터 요소를 ref로 못가져오므로 id로 요소구함.
 export const target_scrFocus = (id: string, scrId?: string) => {
 	const target = document.getElementById(id);
 	if (!target) return;
@@ -82,3 +74,7 @@ export const copyText = (text: string) => {
 			console.error("복사 실패");
 		});
 };
+// \n -> <br>
+export const nToBr = (text: string): string => (text ? text.replace(/\n/g, "<br>") : "");
+// <br> -> \n
+export const brToN = (text: string): string => (text ? text.replace(/<br>/g, "\n") : "");

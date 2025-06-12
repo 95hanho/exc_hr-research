@@ -1,7 +1,6 @@
 /* 관리자 설문 문항 설정 */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-// import { adminDeleteSurvey, getAdminSurveyResult } from "../compositions/admin";
 import { useDispatch } from "react-redux";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";

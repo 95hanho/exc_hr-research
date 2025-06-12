@@ -1,10 +1,10 @@
+/* 설문 종료 */
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSurveyRequestManager } from "../hooks/survey/useSurveyRequestManager";
 import { useSurveySetRequestManager } from "../hooks/survey/useSurveySetRequestManager";
 import { useAppDispatch } from "../hooks/useRedux";
 
-/* 설문 종료 */
 export default function SurveyEnd() {
 	const location = useLocation();
 	const navigate = useNavigate();

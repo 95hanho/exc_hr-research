@@ -1,40 +1,44 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ModalJimoon from "../modal/ModalJimoon";
-import { AdminSurveyQuestionProps, MultiChoiceQuestion } from "../../types/survey";
+import { AdminSurveyQuestionProps } from "../../types/survey";
+import { MultiChoiceSubContents } from "../../types/question";
+import MunhangText from "../admin/MunhangText";
+import MunhangTextarea from "../admin/MunhangTextarea";
 
 interface MultiChoiceProps extends AdminSurveyQuestionProps {
-	subContents: MultiChoiceQuestion["subContents"];
+	subContents: MultiChoiceSubContents;
 }
+
 /*
  * 다중객관식
  */
-export default function AdminMultiChoice({ subContents, R_num, changeSubcontents }: MultiChoiceProps) {
-	const executeChange = () => {
-		changeSubcontents(R_num, subContents);
+export default function AdminMultiChoice({ subContents, R_num, munhangsDispatch }: MultiChoiceProps) {
+	const t_changeSubcontents = (in_subContents: Partial<MultiChoiceSubContents>, keepPrev: boolean = true) => {
+		// keepPrev : 이전 내용을 유지할지
+		const merged = keepPrev ? { ...subContents, ...in_subContents } : in_subContents;
+		munhangsDispatch({
+			type: "change_q_subcontents",
+			R_num,
+			subContents: merged,
+		});
 	};
-
-	useEffect(() => {
-		if (!subContents.choices) {
-			subContents.plural = false;
-			subContents.choices = [
-				{ content: "찬성", notic: "" },
-				{ content: "반대", notic: "" },
-			];
-			executeChange();
-		}
-	}, []);
 
 	const [modalOn, set_modalOn] = useState(false);
 	// 엑셀 지문넣기
 	const input_jimoon = (excelData: string[][]) => {
-		subContents.choices = [];
+		const list: MultiChoiceSubContents["choices"] = [];
 		excelData.map((v) => {
-			subContents.choices?.push({
+			list.push({
 				content: v[0] === "기타" ? "R_etc" : v[0],
 				notic: "",
 			});
 		});
-		executeChange();
+		t_changeSubcontents(
+			{
+				choices: list,
+			},
+			false
+		);
 	};
 
 	return (
@@ -45,31 +49,26 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 					<input
 						type="checkbox"
 						checked={subContents.plural || false}
-						onChange={() => {
-							subContents.plural = !subContents.plural;
-							executeChange();
-						}}
+						onChange={() => t_changeSubcontents({ plural: !subContents.plural })}
 					/>
 					{subContents?.plural && (
 						<>
 							선택 갯수:{" "}
-							<input
-								tabIndex={0}
-								type="text"
+							<MunhangText
 								className="form-control"
 								placeholder="제한 없음"
-								value={subContents.count || ""}
-								onChange={(e) => {
-									let targetVal: number | undefined = Number(e.target.value.replace(/\D/g, ""));
-									if (targetVal <= 0) {
-										targetVal = undefined;
-									} else {
+								value={String(subContents.count) || ""}
+								onChange={(value) => {
+									let targetVal: number | undefined = Number(value.replace(/\D/g, ""));
+									if (targetVal <= 0) targetVal = undefined;
+									else {
 										if (subContents.choices && subContents.choices.length < targetVal) {
 											targetVal = subContents.choices.length;
 										}
 									}
-									subContents.count = targetVal;
-									executeChange();
+									t_changeSubcontents({
+										count: targetVal,
+									});
 								}}
 							/>
 							갯수 필수체크여부
@@ -77,14 +76,16 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 								id={"requiredCount" + R_num}
 								type="checkbox"
 								checked={subContents.requiredCount || false}
-								onChange={() => {
-									subContents.requiredCount = !subContents.requiredCount;
-									executeChange();
-								}}
+								onChange={() =>
+									t_changeSubcontents({
+										requiredCount: !subContents.requiredCount,
+									})
+								}
 							/>
 						</>
 					)}
 					<button
+						tabIndex={-1}
 						style={{ position: "absolute", right: 0 }}
 						className="admin-plma green"
 						onClick={() => {
@@ -104,12 +105,9 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 					className="form-control"
 					value={subContents?.half ? "on" : "off"}
 					onChange={(e) => {
-						if (e.target.value === "on") {
-							subContents.half = true;
-						} else {
-							subContents.half = false;
-						}
-						executeChange();
+						t_changeSubcontents({
+							half: e.target.value === "on",
+						});
 					}}
 				>
 					<option value="off">일렬로</option>
@@ -117,17 +115,17 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 				</select>
 			</div>
 			<div className={`admin-choice`}>
-				{subContents?.choices?.map((choice, choiceIdx, choiceArr) => {
+				{subContents.choices.map((choice, choiceIdx, choiceArr) => {
 					return (
 						<div key={"choice" + choiceIdx} className="it" style={{ marginTop: "6px" }}>
 							<select
-								tabIndex={-1}
-								name=""
-								id=""
 								value={choice.content === "R_etc" ? choice.content : ""}
 								onChange={(e) => {
-									choice.content = e.target.value;
-									executeChange();
+									t_changeSubcontents({
+										choices: subContents.choices.map((v, i) =>
+											i === choiceIdx ? { ...subContents.choices[choiceIdx], content: e.target.value } : v
+										),
+									});
 								}}
 							>
 								<option value="">텍스트</option>
@@ -136,31 +134,33 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 							<label style={{ width: "50%" }}>
 								{choiceIdx + 1} :{" "}
 								{choice.content !== "R_etc" ? (
-									<textarea
-										tabIndex={0}
-										rows={choice.content?.match(/<br>/g) ? (choice.content.match(/<br>/g)?.length || 0) + 1 : 1}
+									<MunhangTextarea
 										className="admin-textarea"
 										style={{ width: "80%" }}
-										value={choice.content ? choice.content.replace(/<br>/g, "\n") : ""}
+										value={choice.content}
 										placeholder="선택지를 입력해주세요."
-										onChange={(e) => {
-											choice.content = e.target.value.replace(/\n/g, "<br>");
-											executeChange();
+										onChange={(value) => {
+											t_changeSubcontents({
+												choices: subContents.choices.map((v, i) =>
+													i === choiceIdx ? { ...subContents.choices[choiceIdx], content: value } : v
+												),
+											});
 										}}
 									/>
 								) : (
 									"기타"
 								)}
 							</label>
-							<input
-								tabIndex={0}
-								type="text"
+							<MunhangText
 								placeholder="부가설명을 입력해주세요."
 								style={{ fontSize: "12px", backgroundColor: "#fff" }}
 								value={choice.notic || ""}
-								onChange={(e) => {
-									choice.notic = e.target.value;
-									executeChange();
+								onChange={(value) => {
+									t_changeSubcontents({
+										choices: subContents.choices.map((v, i) =>
+											i === choiceIdx ? { ...subContents.choices[choiceIdx], notic: value } : v
+										),
+									});
 								}}
 							/>
 							{choiceArr.length > 2 && (
@@ -168,9 +168,9 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 									tabIndex={-1}
 									className="admin-plma red"
 									onClick={() => {
-										const list = subContents.choices;
-										list?.splice(choiceIdx, 1);
-										executeChange();
+										t_changeSubcontents({
+											choices: subContents.choices.filter((_, i) => i !== choiceIdx),
+										});
 									}}
 								>
 									-
@@ -183,13 +183,18 @@ export default function AdminMultiChoice({ subContents, R_num, changeSubcontents
 
 			<div>
 				<button
+					tabIndex={-1}
 					className="admin-plma"
 					onClick={() => {
-						subContents.choices?.push({
-							content: "",
-							notic: null,
+						t_changeSubcontents({
+							choices: [
+								...subContents.choices,
+								{
+									content: "",
+									notic: null,
+								},
+							],
 						});
-						executeChange();
 					}}
 				>
 					선택지추가 +
