@@ -6,16 +6,21 @@ import SurveyQuestionPage_view from "../views/SurveyQuestionPage_view";
 import SurveyPersonalInfoPage from "../views/SurveyPersonalInfoPage";
 import SurveyQuestionPage from "../views/SurveyQuestionPage";
 import SurveyEnd from "../views/SurveyEnd";
-import { AxiosInterceptor } from "../lib/axiosInterceptor";
 import AdminSettings from "../views/AdminSettings";
 import AdminResults from "../views/AdminResults";
 import AdminQuestionEditor from "../views/AdminQuestionEditor";
 import AdminSujuResults from "../views/AdminSujuResults";
+import { AxiosInterceptor } from "../api/axiosInterceptor";
 
 // 리다이렉트 컴포넌트들
-export const Admin_go = () => {
+const Admin_go = () => {
 	const now = new Date();
 	return <Navigate to={`/admin/main/${now.getFullYear()}`} replace />;
+};
+
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+	console.log("AdminLayout");
+	return <AxiosInterceptor>{children}</AxiosInterceptor>;
 };
 
 const Survey_intro_go = () => {
@@ -23,7 +28,8 @@ const Survey_intro_go = () => {
 	return <Navigate to={`/survey/main/${now.getFullYear()}`} replace />;
 };
 
-export const SurveyLayout = ({ children }: { children: React.ReactNode }) => {
+const SurveyLayout = ({ children }: { children: React.ReactNode }) => {
+	console.log("SurveyLayout");
 	return <AxiosInterceptor>{children}</AxiosInterceptor>;
 };
 
@@ -76,35 +82,40 @@ const router = createBrowserRouter(
 				},
 			],
 		},
-
-		{
-			path: "/survey/end",
-			element: <SurveyEnd />,
-		},
 		/* ------------------ 관리자 ------------------ */
 		{
 			path: "/admin",
 			element: <Admin_go />,
 		},
 		{
-			path: "/admin/main",
-			element: <Admin_go />,
-		},
-		{
-			path: "/admin/main/:surveyYear",
-			element: <AdminSettings />,
-		},
-		{
-			path: "/admin/:surveyType",
-			element: <AdminSurveyHome_go />,
-		},
-		{
-			path: "/admin/:surveyType/:surveyPage",
-			element: <AdminQuestionEditor />,
-		},
-		{
-			path: "/admin/:surveyType/result/:surveyPage",
-			element: <AdminResults />,
+			path: "/admin",
+			element: (
+				<AdminLayout>
+					<Outlet />
+				</AdminLayout>
+			),
+			children: [
+				{
+					path: "main",
+					element: <Admin_go />,
+				},
+				{
+					path: "main/:surveyYear",
+					element: <AdminSettings />,
+				},
+				{
+					path: ":surveyType",
+					element: <AdminSurveyHome_go />,
+				},
+				{
+					path: ":surveyType/:surveyPage",
+					element: <AdminQuestionEditor />,
+				},
+				{
+					path: ":surveyType/result/:surveyPage",
+					element: <AdminResults />,
+				},
+			],
 		},
 		{
 			path: "/service/:surveyType",

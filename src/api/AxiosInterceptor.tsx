@@ -9,9 +9,7 @@ const instance = axios.create({
 const AxiosInterceptor = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	const location = useLocation();
 
-	const requestFulfill = async (
-		config: InternalAxiosRequestConfig
-	): Promise<InternalAxiosRequestConfig> => {
+	const requestFulfill = async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
 		return config;
 	};
 
@@ -21,6 +19,7 @@ const AxiosInterceptor = ({ children }: Readonly<{ children: React.ReactNode }>)
 	};
 
 	const responseFulfill = (response: AxiosResponse): AxiosResponse => {
+		console.log("response");
 		return response;
 	};
 
@@ -37,7 +36,7 @@ const AxiosInterceptor = ({ children }: Readonly<{ children: React.ReactNode }>)
 			instance.interceptors.request.eject(requestInterceptors);
 			instance.interceptors.response.eject(responseInterceptors);
 		};
-	}, [location.pathname]);
+	}, [requestInterceptors, responseInterceptors, location.pathname]);
 
 	return children;
 };

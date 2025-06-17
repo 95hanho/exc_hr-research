@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { get_normal } from "../../lib/apiFilter";
+import { get_normal } from "../../api/apiFilter";
 import API_URL from "../../api/endpoints";
 import { Munhang } from "../../types/question";
 
