@@ -21,7 +21,3 @@ npm run dev -- --port 5188 => port5188로 로컬실행
 
 npm run build
 후에 '/RAC'디렉토리 파일 'research.exc.co.kr\RAC'에 복사/덮어쓰기
-
-## 수주결과 비번
-
-엑스퍼트@!
