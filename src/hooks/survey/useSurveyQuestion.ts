@@ -4,6 +4,7 @@ import API_URL from "../../api/endpoints";
 import { MunhangVisibilityRule, RequiredHideRule } from "../../types/survey";
 import { AxiosResponse } from "axios";
 import { Munhang } from "../../types/question";
+import { isTest } from "../../lib/test";
 
 export type surveyQuestionSuccess = {
 	code: 200;
@@ -33,6 +34,7 @@ export function useSurveyQuestion(surveyType: string, surveyPage: string, survey
 			return get_normal(API_URL.SURVEY_QUESTION, { surveyType, surveyPage }, { token: surveyToken });
 		},
 		select: (res: AxiosResponse) => {
+			if (isTest) console.log(res);
 			const newData: surveyQuestionSuccess | surveyQuestionFail = { ...res.data };
 			if (newData.code === 200) {
 				if (newData.data.requiredList) {

@@ -18,7 +18,7 @@ export const uiAlarm = {
 				},
 				500,
 				function () {
-					uiAlarm.openIndex = setTimeout(() => {
+					uiAlarm.openIndex = window.setTimeout(() => {
 						$(target).fadeOut(1000);
 					}, 3000);
 				}
