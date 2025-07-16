@@ -9,6 +9,7 @@ type ParamValue =
 	| Blob
 	| File
 	| FileList
+	| Date
 	| (string | number | boolean | Blob | File)[] // 배열 지원
 	| undefined;
 
@@ -150,7 +151,7 @@ export const post_urlFormData = (url: string, params: Params, headers?: Headers)
 			for (const v of value) {
 				url_form_data.append(key, String(v));
 			}
-		} else if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+		} else if (typeof value === "string" || typeof value === "number" || typeof value === "boolean" || value instanceof Date) {
 			url_form_data.append(key, String(value));
 		} else {
 			console.warn(`URLSearchParams does not support key "${key}" with value type "${typeof value}"`);

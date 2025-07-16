@@ -9,11 +9,14 @@ import { isTest } from "../../lib/test";
 export type surveyQuestionSuccess = {
 	code: 200;
 	data: {
+		top_menu_list_jsonData: string;
+		jsonData: string;
+		//
 		head_img_url: string;
 		headerTitle: string;
 		initData: Record<string, string>;
 		munhangs: Munhang[];
-		progress_raw: boolean[];
+		progress_raw: boolean[] | string;
 		requiredList: RequiredHideRule[];
 		store_data: Record<string, string>;
 		top_menuList: string[];
@@ -34,40 +37,61 @@ export function useSurveyQuestion(surveyType: string, surveyPage: string, survey
 			return get_normal(API_URL.SURVEY_QUESTION, { surveyType, surveyPage }, { token: surveyToken });
 		},
 		select: (res: AxiosResponse) => {
-			if (isTest) console.log(res);
-			const newData: surveyQuestionSuccess | surveyQuestionFail = { ...res.data };
-			if (newData.code === 200) {
-				if (newData.data.requiredList) {
-					const obj: Record<string, MunhangVisibilityRule[]> = {};
-					const requiredList = [...newData.data.requiredList];
-					requiredList.forEach((v: RequiredHideRule) => {
-						if (!obj[v.attr]) {
-							obj[v.attr] = [
-								{
+			try {
+				if (isTest) console.log(res);
+				const newData: surveyQuestionSuccess | surveyQuestionFail = { ...res.data };
+				if (newData.code === 200) {
+					if (typeof newData.data.progress_raw === "string") {
+						newData.data.progress_raw = JSON.parse(String(newData.data.progress_raw));
+					}
+					if (typeof newData.data.jsonData === "string") {
+						const obj = JSON.parse(String(newData.data.jsonData));
+						newData.data.initData = obj.initData;
+						newData.data.munhangs = obj.munhangs;
+						newData.data.requiredList = obj.requiredList;
+					}
+					if (typeof newData.data.store_data === "string") {
+						newData.data.store_data = JSON.parse(newData.data.store_data);
+					}
+					if (typeof newData.data.top_menu_list_jsonData === "string") {
+						newData.data.top_menuList = JSON.parse(newData.data.top_menu_list_jsonData).top_menuList;
+					}
+					if (newData.data.requiredList) {
+						const obj: Record<string, MunhangVisibilityRule[]> = {};
+						const requiredList = [...newData.data.requiredList];
+						requiredList.forEach((v: RequiredHideRule) => {
+							if (!obj[v.attr]) {
+								obj[v.attr] = [
+									{
+										hide: v.hide,
+										values: v.values,
+									},
+								];
+							} else {
+								obj[v.attr].push({
 									hide: v.hide,
 									values: v.values,
-								},
-							];
-						} else {
-							obj[v.attr].push({
-								hide: v.hide,
-								values: v.values,
+								});
+							}
+						});
+						newData.data.munhangVisibilityRule = obj;
+					}
+					// R_num 달아주기
+					let rNum = 0;
+					if (newData.data.munhangs) {
+						newData.data.munhangs.forEach((munhang) => {
+							munhang.questions.map((question) => {
+								rNum++;
+								question.R_num = rNum;
 							});
-						}
-					});
-					newData.data.munhangVisibilityRule = obj;
+						});
+					}
 				}
-				// R_num 달아주기
-				let rNum = 0;
-				newData.data.munhangs.forEach((munhang) => {
-					munhang.questions.map((question) => {
-						rNum++;
-						question.R_num = rNum;
-					});
-				});
+				return newData;
+			} catch (err) {
+				console.log(err);
+				throw err; // 꼭 throw 해야 React Query가 인식함
 			}
-
-			return newData;
 		},
 		// 해당 쿼리를 실행할지 여부를 제어하는 조건 해당 요소들이 바뀌면 쿼리 실행
 		enabled: !!surveyType && !!surveyPage && !!surveyToken,

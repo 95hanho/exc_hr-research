@@ -10,8 +10,14 @@ interface AdminSetCommonParam extends AdminCommonInfo {
 // 공통 설문정보 수정
 export function useAdminSetCommon() {
 	return useMutation({
-		mutationFn: async ({ color, start_date, end_date, open_status, surveyYear }: AdminSetCommonParam) => {
-			const res = await post_urlFormData(API_URL.ADMIN_COMMON_SET, { color, start_date, end_date, open_status, s_year: surveyYear });
+		mutationFn: async ({ color, start_date, end_date, surveyYear }: AdminSetCommonParam) => {
+			console.log(color, start_date, end_date, surveyYear);
+			const res = await post_urlFormData(API_URL.ADMIN_COMMON_SET, {
+				color,
+				start_date: new Date(String(start_date)),
+				end_date: new Date(String(end_date)),
+				s_year: surveyYear,
+			});
 			return res.data;
 		},
 		/*

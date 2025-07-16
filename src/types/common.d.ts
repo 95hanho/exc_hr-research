@@ -18,7 +18,6 @@ export type AdminCommonInfo = {
 	color?: string;
 	start_date?: string;
 	end_date?: string;
-	open_status?: 1 | 2;
 };
 // 관리자 설문 리스트
 export type AdminSurveyInfo = {

@@ -571,6 +571,7 @@ export default function SurveyQuestionPage() {
 
 	useEffect(() => {
 		// surveyQuestion 데이터가 준비된 이후 실행
+		console.log("surveyQuestion", isSuccess, isError, surveyQuestion);
 		if (!surveyToken || !location.state?.email) {
 			dispatch({
 				type: "modal/on_modal_alert",
@@ -580,6 +581,7 @@ export default function SurveyQuestionPage() {
 			return;
 		}
 		if (isSuccess && surveyQuestion && !isSurveyDataHandledRef.current) {
+			console.log(2, "surveyQuestion", surveyQuestion);
 			handleSurveyData(surveyQuestion);
 			isSurveyDataHandledRef.current = true;
 		} else if (isError) {

@@ -40,7 +40,6 @@ export default function AdminSettings() {
 		color: "",
 		start_date: "",
 		end_date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-		open_status: 1,
 	});
 	const [date1, set_date1] = useState<Date>(new Date(`${new Date().getFullYear()}-01-01`));
 	const [date2, set_date2] = useState<Date>(new Date());
@@ -110,7 +109,6 @@ export default function AdminSettings() {
 					color: adminCommonData.result.common_info.color,
 					start_date: adminCommonData.result.common_info.start_date,
 					end_date: adminCommonData.result.common_info.end_date,
-					open_status: adminCommonData.result.common_info.open_status,
 				};
 			});
 			set_makingList([...adminCommonData.result.company_list]);
@@ -166,7 +164,7 @@ export default function AdminSettings() {
 							/>
 						</div>
 					</div>
-					<div className="user-open">
+					{/* <div className="user-open">
 						상태 :{" "}
 						<select
 							name=""
@@ -180,7 +178,7 @@ export default function AdminSettings() {
 							<option value="1">관리자오픈</option>
 							<option value="2">유저오픈</option>
 						</select>
-					</div>
+					</div> */}
 					<div>
 						<button className="btn btn-info" onClick={save_before}>
 							저장
