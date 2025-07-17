@@ -11,7 +11,7 @@ interface AdminSurveyInfoParam extends AdminSurveyInfo {
 export function useAdminSurveyInfo() {
 	return useMutation({
 		mutationFn: async ({ survey_name, survey_url, survey_description, surveyYear }: AdminSurveyInfoParam) => {
-			const res = await post_urlFormData(API_URL.ADMIN_COMMON, { survey_name, survey_url, survey_description, survey_year: surveyYear });
+			const res = await post_urlFormData(API_URL.ADMIN_COMMON, { survey_name, survey_url, survey_description, s_year: surveyYear });
 			return res.data;
 		},
 		/*

@@ -23,6 +23,7 @@ export type AdminSurveyQuestionFail = {
 	msg?: string;
 };
 
+// 설문 정보 조회
 export function useAdminSurveyQuestion(surveyType: string, surveyPage: string) {
 	return useQuery({
 		// 쿼리 키 - 바뀌는 경우 다른 요청으로 인식

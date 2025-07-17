@@ -2,7 +2,7 @@ import { post_urlFormData } from "../../lib/apiFilter";
 import API_URL from "../../api/endpoints";
 import { useMutation } from "@tanstack/react-query";
 
-// 설문 시작하기
+// 설문내용 삭제
 export function useAdminSurveyResultDelete() {
 	return useMutation({
 		mutationFn: async ({ surveyType, email }: { surveyType: string; email: string }) => {

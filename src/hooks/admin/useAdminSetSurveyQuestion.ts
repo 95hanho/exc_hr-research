@@ -14,7 +14,7 @@ type AdminSetSurveyQuestionParam = {
 	initData: ResultData;
 };
 
-// 설문 시작하기
+// 설문 정보 저장
 export function useAdminSetSurveyQuestion() {
 	return useMutation({
 		mutationFn: async ({ surveyType, surveyPage, top_menuList, head_title, requiredList, munhangs, initData }: AdminSetSurveyQuestionParam) => {
@@ -22,6 +22,7 @@ export function useAdminSetSurveyQuestion() {
 				surveyType,
 				surveyPage,
 				top_menu_list_jsonData: JSON.stringify({ top_menuList }),
+				top_menuList,
 				head_title,
 				jsonData: JSON.stringify({
 					requiredList,

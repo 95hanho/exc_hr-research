@@ -294,9 +294,9 @@ export default function AdminQuestionEditor() {
 					<button type="button" className="btn btn-lg btn-danger" onClick={store_surveyInfo}>
 						저장하기
 					</button>{" "}
-					<button type="button" className="btn btn-lg btn-success" onClick={create_resultTable}>
+					{/* <button type="button" className="btn btn-lg btn-success" onClick={create_resultTable}>
 						결과테이블만들기
-					</button>
+					</button> */}
 					<p>* 자주 저장하여 설정한 것이 날아가지 않게...</p>
 				</div>
 			</div>

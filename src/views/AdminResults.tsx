@@ -402,11 +402,11 @@ export default function AdminResults() {
 										<br />
 										하기
 									</th>
-									<th style={{ minWidth: "80px" }}>
+									{/* <th style={{ minWidth: "80px" }}>
 										최종제출
 										<br />
 										취소
-									</th>
+									</th> */}
 									{survey_thead.map((key, i) => {
 										return (
 											<th
@@ -438,7 +438,7 @@ export default function AdminResults() {
 												삭제
 											</button>
 										</td>
-										<td style={{ textAlign: "center" }}>
+										{/* <td style={{ textAlign: "center" }}>
 											{surveyVal["tesmi_status"].includes("완료") && (
 												<button
 													className="btn btn-warning"
@@ -449,7 +449,7 @@ export default function AdminResults() {
 													취소
 												</button>
 											)}
-										</td>
+										</td> */}
 										{Object.values(surveyVal).map((tdVal, i2) => {
 											return (
 												<td
