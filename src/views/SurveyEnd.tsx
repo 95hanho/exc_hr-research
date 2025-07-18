@@ -54,7 +54,7 @@ export default function SurveyEnd() {
 		<div id="surveyEnd">
 			<div>
 				<img src={`https://research.exc.co.kr/RAC/end.jpg`} />
-				<div className="manager-reinput">
+				{/* <div className="manager-reinput">
 					<form onSubmit={store_manager}>
 						<h4>설문 요청담당자를 한 번 더 확인해주세요.</h4>
 						<div>
@@ -62,7 +62,7 @@ export default function SurveyEnd() {
 							<button className="btn btn-success">저장</button>
 						</div>
 					</form>
-				</div>
+				</div> */}
 				<div>
 					<button
 						className="btn btn-info"
